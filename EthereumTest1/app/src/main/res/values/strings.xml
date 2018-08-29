@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Paranoid Android</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_name_not_loaded">loading username...</string>
+    <string name="user_name_not_registered">not yet registered...</string>
+    <string name="register_button">register</string>
+    <string name="publication">publication</string>
+    <string name="tag">tag</string>
+    <string name="sort_by">sort by</string>
+
+    <string name="title_activity_view_content">ViewContentActivity</string>
+    <string name="title_activity_edit_content">EditContentActivity</string>
+    <string name="picture_transition_name">content_image</string>
+    <string name="subscribed_publications">subscribed:</string>
+    <string name="all_publications">all pubs:</string>
+    <string name="selectPublication">select publication</string>
+    <string name="delete">delete</string>
+    <string name="edit">edit</string>
+</resources>
