@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mIsFabOpen = false;
     private int mNumAccounts = 0;
     private long mSelectedAccount;
-    private final int BLOCK_NUMBER_FADE_TIME_MILLI = 35000;
+    private final int BLOCK_NUMBER_FADE_TIME_MILLI = 50000;
 
 
     // handler for received data from service
