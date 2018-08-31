@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     Context mContext;
 
     //Used for upgrading the database
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 13;
 
     //name of our database file
     private static final String DATABASE_NAME = "circus_droid";
@@ -45,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int TX_ACTION_ID_PUBLISH_USER_CONTENT= 3;
     public static final int TX_ACTION_ID_PUBLISH_TO_PUBLICATION= 4;
     public static final int TX_ACTION_ID_CREATE_PUBLICATION= 5;
+    public static final int TX_ACTION_ID_SUPPORT_POST = 6;
 
     public static final String TABLE_ETH_TRANSACTIONS = "table_eth_transactions";
     public static final String CREATE_TABLE_ETH_TRANSACTIONS = "CREATE TABLE " + TABLE_ETH_TRANSACTIONS
@@ -90,6 +91,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Publication Content Table
     public static final String KEY_PUBLICATION_INDEX = "KEY_PUBLICATION_INDEX";
     public static final String KEY_PUBLICATION_CONTENT_INDEX = "KEY_USER_CONTENT_INDEX";
+    public static final String KEY_PUBLICATION_CONTENT_UNIQUE_SUPPORTERS = "KEY_PUBLICATION_CONTENT_UNIQUE_SUPPORTERS";
+    public static final String KEY_PUBLICATION_CONTENT_REVENUE_WEI = "KEY_PUBLICATION_CONTENT_REVENUE_WEI";
+    public static final String KEY_PUBLICATION_CONTENT_NUM_COMMENTS = "KEY_PUBLICATION_CONTENT_NUM_COMMENTS";
+
 
     public static final String TABLE_PUBLICATION_CONTENT = "table_publication_content";
     public static final String CREATE_TABLE_PUBLICATION_CONTENT = "CREATE TABLE " + TABLE_PUBLICATION_CONTENT
@@ -103,6 +108,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_TITLE + " TEXT,"
             + KEY_PRIMARY_TEXT + " TEXT,"
             + KEY_PUBLISHED_DATE +  " TEXT,"
+            + KEY_PUBLICATION_CONTENT_UNIQUE_SUPPORTERS +  " INTEGER,"
+            + KEY_PUBLICATION_CONTENT_REVENUE_WEI +  " TEXT,"
+            + KEY_PUBLICATION_CONTENT_NUM_COMMENTS +  " INTEGER,"
             + "UNIQUE(" + KEY_PUBLICATION_INDEX + " , " + KEY_PUBLICATION_CONTENT_INDEX + ") ON CONFLICT REPLACE"
             + ")";
 
@@ -111,11 +119,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_PUBLICATION_NAME = "KEY_PUBLICATION_NAME";
     public static final String KEY_PUBLICATION_META_DATA = "KEY_PUBLICATION_META_DATA";
     public static final String KEY_PUBLICATION_ADMIN_ADDRESS= "KEY_PUBLICATION_ADMIN_ADDRESS";
+    public static final String KEY_PUBLICATION_UNIQUE_SUPPORTERS= "KEY_PUBLICATION_UNIQUE_SUPPORTERS";
     //public static final String KEY_NUM_ACCESS_LIST_ADDRESSES = "KEY_PUBLICATION_ADMIN_ADDRESS";
     public static final String KEY_PUBLICATION_NUM_PUBLISHED = "KEY_PUBLICATION_NUM_PUBLISHED";
     public static final String KEY_PUBLICATION_MIN_SUPPORT_COST_WEI = "KEY_PUBLICATION_MIN_SUPPORT_COST_WEI";
     public static final String KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE = "KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE";
-    public static final String KEY_PUBLICATION_UNIQUE_SUPPORTERS = "KEY_PUBLICATION_UNIQUE_SUPPORTERS";
     public static final String KEY_PUBLICATION_SUBSCRIBED_LOCALLY = "KEY_PUBLICATION_SUBSCRIBED_LOCALLY";
 
     public static final String TABLE_PUBLICATIONS = "table_publications";
@@ -214,7 +222,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_TITLE, publicationContent.title);
             values.put(KEY_PRIMARY_TEXT, publicationContent.primaryText);
             values.put(KEY_PUBLISHED_DATE, publicationContent.publishedDate);
-            db.insertWithOnConflict(TABLE_PUBLICATION_CONTENT, null, values, CONFLICT_IGNORE);
+            values.put(KEY_PUBLICATION_CONTENT_UNIQUE_SUPPORTERS, publicationContent.uniqueSupporters);
+            values.put(KEY_PUBLICATION_CONTENT_REVENUE_WEI, publicationContent.revenueWei);
+            values.put(KEY_PUBLICATION_CONTENT_NUM_COMMENTS, publicationContent.numComments);
+            db.insertWithOnConflict(TABLE_PUBLICATION_CONTENT, null, values, CONFLICT_REPLACE);
         }
         db.close();
     }
@@ -346,9 +357,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String title = c.getString(c.getColumnIndex(KEY_TITLE));
         String primaryText = c.getString(c.getColumnIndex(KEY_PRIMARY_TEXT));
         long publishedDate = c.getLong(c.getColumnIndex(KEY_PUBLISHED_DATE));
+        long uniqueSupporters = c.getLong(c.getColumnIndex(KEY_PUBLICATION_CONTENT_UNIQUE_SUPPORTERS));
+        String revenueWei = c.getString(c.getColumnIndex(KEY_PUBLICATION_CONTENT_REVENUE_WEI));
+        long numComments = c.getLong(c.getColumnIndex(KEY_PUBLICATION_CONTENT_NUM_COMMENTS));
 
         return new DBPublicationContentItem(publicationIndex, publicationUserContentIndex, address,
-                contentIPFS, imageIPFS, json, title, primaryText, publishedDate);
+                contentIPFS, imageIPFS, json, title, primaryText, publishedDate, uniqueSupporters,
+                revenueWei, numComments);
     }
 
     public static DBPublication convertCursorToDBPublication(Cursor c) {

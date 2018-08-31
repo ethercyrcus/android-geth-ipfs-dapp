@@ -58,6 +58,7 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
 
             @Override
             public void bindView(View view, Context context, final Cursor cursor) {
+                //TODO YA BITCH - Add $, unique Supporters, and button for viewing comments
                 final DBPublicationContentItem ci = DatabaseHelper.convertCursorToDBPublicationContentItem(cursor);
                 final ViewHolder holder = new ViewHolder(view);
 
@@ -75,6 +76,8 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
                 holder.mTitleView.setText(ci.title);
                 String textFromHtml = Jsoup.parse(ci.primaryText).text();
                 holder.mBodyView.setText(textFromHtml);
+                holder.mUniqueSupportersView.setText(ci.uniqueSupporters + " supporters");
+                holder.mRevenueView.setText(DataUtils.formatAccountBalanceEther(ci.revenueWei, 8));
                 holder.mDateAndAuthorView.setText("Published " + DataUtils.convertTimeStampToDateString(ci.publishedDate)
                         + " by " + ci.publishedByEthAddress);
 
@@ -170,6 +173,7 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
             public final TextView mDateAndAuthorView;
             public final ImageView mImageView;
             public final TextView mRevenueView;
+            public final TextView mUniqueSupportersView;
 
             public ViewHolder(View view) {
                 super(view);
@@ -179,6 +183,7 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
                 mDateAndAuthorView = (TextView) view.findViewById(R.id.dateAndAuthor);
                 mImageView = (ImageView) view.findViewById(R.id.contentImage);
                 mRevenueView = (TextView) view.findViewById(R.id.revenue);
+                mUniqueSupportersView = (TextView) view.findViewById(R.id.uniqueSupporters);
             }
 
             @Override

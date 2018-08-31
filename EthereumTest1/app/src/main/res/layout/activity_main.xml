@@ -260,7 +260,7 @@
         android:scaleType="center"
         app:borderWidth="0dp"
         app:elevation="6dp"
-        android:onClick="updateMetaData"/>
+        android:onClick="createPublication"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

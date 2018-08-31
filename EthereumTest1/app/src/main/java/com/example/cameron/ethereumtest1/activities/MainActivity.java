@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -417,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show();
     }
 
-    public void updateMetaData(View view) {
+    public void createPublication(View view) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_create_publication);
 

@@ -86,7 +86,7 @@ public class EthTransactionListFragment extends Fragment {
 
 
                 textViewOne.setText(actionDisplay);
-                textViewTwo.setText("block:" + blockNumber + "; gas:" + gasCost);
+                textViewTwo.setText("block:" + blockNumber + "; gas:" + gasCost + " info: " + content);
                 textView3.setText(transactionHash);
                 //textView4.setText(timestamp);
                 checkBox.setChecked(confirmed);

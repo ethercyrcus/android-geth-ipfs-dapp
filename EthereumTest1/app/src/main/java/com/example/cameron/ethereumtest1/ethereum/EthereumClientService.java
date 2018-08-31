@@ -23,6 +23,7 @@ import com.example.cameron.ethereumtest1.database.DBUserContentItem;
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.model.ContentItem;
 import com.example.cameron.ethereumtest1.util.Convert;
+import com.example.cameron.ethereumtest1.util.DataUtils;
 import com.example.cameron.ethereumtest1.util.PrefUtils;
 import com.google.gson.Gson;
 
@@ -129,6 +130,11 @@ public class EthereumClientService extends Service {
     public static final String PARAM_PUB_ADMIN_PAY = "param.pub.admin.pay";
     private static final String UI_CREATE_PUBLICATION_PENDING_CONFIRMATION = "ui.create.publication.pending.confirmation";
 
+    public static final String ETH_SUPPORT_POST = "eth.support.post";
+    public static final String PARAM_COMMENT = "param.comment";
+    public static final String PARAM_PUBLICATION_CONTENT_ITEM_NUMBER = "param.publication.content.item.number";
+    private static final String UI_SUPPORT_POST_SENT = "ui.support.post.sent.pending.confirmation";
+
     private EthereumClient mEthereumClient;
     private org.ethereum.geth.Context mContext;
     private Node mNode;
@@ -212,6 +218,14 @@ public class EthereumClientService extends Service {
                     password = b.getString(PARAM_PASSWORD);
                     handleCreatePublication(name, meta, minCost, adminPay, password);
                     break;
+                case ETH_SUPPORT_POST:
+                    String supportAmount = b.getString(PARAM_AMOUNT);
+                    String comment = b.getString(PARAM_COMMENT);
+                    int whichPublication = b.getInt(PARAM_WHICH_PUBLICATION);
+                    int contentIndex = b.getInt(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER);
+                    password = b.getString(PARAM_PASSWORD);
+                    handleSupportPost(supportAmount, comment, whichPublication, contentIndex, password);
+                    break;
                 default:
                     break;
             }
@@ -285,6 +299,13 @@ public class EthereumClientService extends Service {
                     b.putString(PARAM_PUB_ADMIN_PAY, intent.getStringExtra(PARAM_PUB_ADMIN_PAY));
                     b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
                     break;
+                case ETH_SUPPORT_POST:
+                    b.putString(PARAM_AMOUNT, intent.getStringExtra(PARAM_AMOUNT));
+                    b.putString(PARAM_COMMENT, intent.getStringExtra(PARAM_COMMENT));
+                    b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
+                    b.putInt(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, intent.getIntExtra(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, -1));
+                    b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
+                    break;
             }
             b.putString(MESSAGE_ACTION, intent.getAction());
             msg.setData(b);
@@ -322,8 +343,12 @@ public class EthereumClientService extends Service {
 
 
         try {
+            File ethDataDirectory = new File(getFilesDir() + ETH_DATA_DIRECTORY + "/GethDroid");
+            if (!ethDataDirectory.exists()) ethDataDirectory.mkdirs();
+            File staticNodes = new File(getFilesDir() + ETH_DATA_DIRECTORY + "/GethDroid", "static-nodes.json");
+            if (!staticNodes.exists()) staticNodes.createNewFile();
             OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(new FileOutputStream(new File(getFilesDir() + ETH_DATA_DIRECTORY + "/GethDroid", "static-nodes.json")));
+                    new OutputStreamWriter(new FileOutputStream(staticNodes));
             String string = "[";
 //            for (String s: EthereumConstants.LIGHT_SERVERS) { //fuck you string immutability interview questions
 //                string = string + ("  \"" + s + "\",");
@@ -357,6 +382,7 @@ public class EthereumClientService extends Service {
         public void onNewHead(final Header header) {
             Intent intent = new Intent(UI_UPDATE_ETH_BLOCK);
             mBlockNumber = header.getNumber();
+            if (mBlockNumber < 2800000) return;
             intent.putExtra(PARAM_BLOCK_NUMBER, mBlockNumber);
             LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
             bm.sendBroadcast(intent);
@@ -368,9 +394,9 @@ public class EthereumClientService extends Service {
                 Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
                 for (int i = 0; i < mNode.getPeersInfo().size(); i++) {
                     Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getID());
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
+//                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
+//                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
+//                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -588,6 +614,20 @@ public class EthereumClientService extends Service {
                 String contentRevenue = returnData.get(0).getBigInt().getString(10);
                 postRevenue.add(contentRevenue);
 
+                Interface uniqueSupporters = Geth.newInterface();
+                uniqueSupporters.setDefaultBigInt();
+                returnData.set(0, uniqueSupporters);
+
+                contract.callFix(callOpts, returnData, "getContentUniqueSupporters", callData);
+                long contentUniqueSupporters = returnData.get(0).getBigInt().getInt64();
+
+                Interface numComments = Geth.newInterface();
+                numComments.setDefaultBigInt();
+                returnData.set(0, numComments);
+
+                contract.callFix(callOpts, returnData, "getContentNumComments", callData);
+                long contentNumComments = returnData.get(0).getBigInt().getInt64();
+
 
                 String json = "";
                 try {
@@ -620,7 +660,7 @@ public class EthereumClientService extends Service {
                 ci.publishedBy = userName;
                 postJsonArray.add(convertContentItemToJSON(ci));
 
-                DBPublicationContentItem dbpci = new DBPublicationContentItem(index, (int)i, ci.publishedBy, contentString, ci.primaryImageUrl, json, ci.title, ci.primaryText, ci.publishedDate);
+                DBPublicationContentItem dbpci = new DBPublicationContentItem(index, (int)i, ci.publishedBy, contentString, ci.primaryImageUrl, json, ci.title, ci.primaryText, ci.publishedDate, contentUniqueSupporters, contentRevenue, contentNumComments);
                 dbSaveList.add(dbpci);
 
             }
@@ -1131,6 +1171,7 @@ public class EthereumClientService extends Service {
             TransactOpts tOpts = new TransactOpts();
             tOpts.setContext(mContext);
             tOpts.setFrom(address);
+            tOpts.setGasLimit(1000000);
             tOpts.setSigner(new Signer() {
                 @Override
                 public Transaction sign(Address address, Transaction transaction) throws Exception {
@@ -1175,6 +1216,68 @@ public class EthereumClientService extends Service {
             e.printStackTrace();
         }
         Intent intent = new Intent(UI_CREATE_PUBLICATION_PENDING_CONFIRMATION);
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+        bm.sendBroadcast(intent);
+        pollForTransactionConfirmation(transactionHash, ethereumTransaction);
+    }
+
+    private void handleSupportPost(String amountString, String comment, long whichPublication, long contentIndex, final String password) {
+        Hash transactionHash = null;
+        DBEthereumTransaction ethereumTransaction = null;
+        try {
+            final KeyStore mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)  + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
+
+            BoundContract publicationContract = Geth.bindContract(
+                    new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
+                    PUBLICATION_REGISTER_ABI, mEthereumClient);
+
+            Address address = Geth.newAddressFromHex(PrefUtils.getSelectedAccountAddress(getBaseContext()));
+
+            TransactOpts tOpts = new TransactOpts();
+            tOpts.setContext(mContext);
+            tOpts.setFrom(address);
+            tOpts.setGasLimit(1000000);
+            BigInt supportAmount = new BigInt(Convert.toWei(amountString, Convert.Unit.ETHER).longValue());
+            tOpts.setValue(supportAmount);
+            tOpts.setSigner(new Signer() {
+                @Override
+                public Transaction sign(Address address, Transaction transaction) throws Exception {
+                    Account account = mKeyStore.getAccounts().get(PrefUtils.getSelectedAccountNum(getBaseContext()));
+                    mKeyStore.unlock(account, password);
+                    Transaction signed = mKeyStore.signTx(account, transaction, new BigInt(4));
+                    mKeyStore.lock(account.getAddress());
+                    return signed;
+                }
+            });
+            long noncePending  = mEthereumClient.getPendingNonceAt(mContext, address);
+            tOpts.setNonce(noncePending);
+
+            // call supportPost
+            Interfaces callParams = Geth.newInterfaces(3);
+
+            Interface paramWhichPub = Geth.newInterface();
+            Interface paramPostIndex = Geth.newInterface();
+            Interface paramComment = Geth.newInterface();
+
+            paramWhichPub.setBigInt(new BigInt(whichPublication));
+            paramPostIndex.setBigInt(new BigInt(contentIndex));
+            paramComment.setString(comment);
+
+            callParams.set(0, paramWhichPub);
+            callParams.set(1, paramPostIndex);
+            callParams.set(2, paramComment);
+
+            final Transaction txSupportPost = publicationContract.transact(tOpts, "supportPost", callParams);
+
+            transactionHash = txSupportPost.getHash();
+            ethereumTransaction = new DBEthereumTransaction(address.getHex().toString(), transactionHash.getHex().toString(), DatabaseHelper.TX_ACTION_ID_SUPPORT_POST, "sent " + supportAmount.getInt64() + ": " +  comment, System.currentTimeMillis(), 0, false, 0);
+            DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+            helper.saveTransactionInfo(ethereumTransaction);
+            mEthereumClient.sendTransaction(mContext, txSupportPost);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(UI_SUPPORT_POST_SENT);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
         bm.sendBroadcast(intent);
         pollForTransactionConfirmation(transactionHash, ethereumTransaction);

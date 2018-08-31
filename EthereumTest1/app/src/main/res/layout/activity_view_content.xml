@@ -57,6 +57,24 @@
             android:layout_below="@id/dateAndAuthor"
             android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/supporters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contentBody"/>
+        <TextView
+            android:id="@+id/revenue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/supporters"/>
+        <Button
+            android:id="@+id/supportPostButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/revenue"
+            android:text="@string/supportPostButton"
+            android:onClick="supportPost"/>
+
     </RelativeLayout>
 
 </ScrollView>

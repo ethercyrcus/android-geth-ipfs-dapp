@@ -14,15 +14,15 @@ public class DBPublicationContentItem implements Parcelable {
     public String title;
     public String primaryText;
     public long publishedDate;
-    public int uniqueSupporters;
+    public long uniqueSupporters;
     public String revenueWei;
-    public int numComments;
+    public long numComments;
 
 
     public DBPublicationContentItem (int publicationIndex, int publicationContentIndex,
                                      String publishedByEthAddress, String contentIPFS,
                                      String imageIPFS, String json, String title, String primaryText,
-                                     long publishedDate) {
+                                     long publishedDate, long uniqueSupporters, String revenueWei, long numComments) {
         this.publicationIndex = publicationIndex;
         this. publicationContentIndex = publicationContentIndex;
         this.publishedByEthAddress = publishedByEthAddress;
@@ -32,6 +32,9 @@ public class DBPublicationContentItem implements Parcelable {
         this.title = title;
         this.primaryText = primaryText;
         this.publishedDate = publishedDate;
+        this.uniqueSupporters = uniqueSupporters;
+        this.revenueWei = revenueWei;
+        this.numComments = numComments;
     }
 
     protected DBPublicationContentItem(Parcel in) {
@@ -44,23 +47,9 @@ public class DBPublicationContentItem implements Parcelable {
         title = in.readString();
         primaryText = in.readString();
         publishedDate = in.readLong();
-    }
-
-    public static final Creator<DBPublicationContentItem> CREATOR = new Creator<DBPublicationContentItem>() {
-        @Override
-        public DBPublicationContentItem createFromParcel(Parcel in) {
-            return new DBPublicationContentItem(in);
-        }
-
-        @Override
-        public DBPublicationContentItem[] newArray(int size) {
-            return new DBPublicationContentItem[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+        uniqueSupporters = in.readLong();
+        revenueWei = in.readString();
+        numComments = in.readLong();
     }
 
     @Override
@@ -74,5 +63,25 @@ public class DBPublicationContentItem implements Parcelable {
         dest.writeString(title);
         dest.writeString(primaryText);
         dest.writeLong(publishedDate);
+        dest.writeLong(uniqueSupporters);
+        dest.writeString(revenueWei);
+        dest.writeLong(numComments);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<DBPublicationContentItem> CREATOR = new Creator<DBPublicationContentItem>() {
+        @Override
+        public DBPublicationContentItem createFromParcel(Parcel in) {
+            return new DBPublicationContentItem(in);
+        }
+
+        @Override
+        public DBPublicationContentItem[] newArray(int size) {
+            return new DBPublicationContentItem[size];
+        }
+    };
 }

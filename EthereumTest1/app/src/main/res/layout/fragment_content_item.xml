@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="220dp"
     android:layout_marginTop="5dp"
     android:orientation="horizontal"
     android:background="@android:color/white">
@@ -47,6 +47,17 @@
             android:textSize="14dp"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/body"/>
+
+        <TextView
+            android:id="@+id/uniqueSupporters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/small_text_margin"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:textColor="@android:color/black"
+            android:textSize="14dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/dateAndAuthor"/>
 
         <TextView
             android:id="@+id/revenue"

@@ -44,6 +44,10 @@ public class DataUtils {
                 return "UPDATE PIC";
             case DatabaseHelper.TX_ACTION_ID_PUBLISH_USER_CONTENT:
                 return "PUBLISH USER";
+            case DatabaseHelper.TX_ACTION_ID_CREATE_PUBLICATION:
+                return "CREATE PUBLICATION";
+            case DatabaseHelper.TX_ACTION_ID_SUPPORT_POST:
+                return "SUPPORT_POST";
             case DatabaseHelper.TX_ACTION_ID_PUBLISH_TO_PUBLICATION:
             default:
                 return "PUBLISH PUBLICATION";
