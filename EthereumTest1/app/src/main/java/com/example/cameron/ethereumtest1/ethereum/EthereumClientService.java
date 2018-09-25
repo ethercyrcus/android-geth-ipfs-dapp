@@ -350,9 +350,9 @@ public class EthereumClientService extends Service {
             OutputStreamWriter outputStreamWriter =
                     new OutputStreamWriter(new FileOutputStream(staticNodes));
             String string = "[";
-//            for (String s: EthereumConstants.LIGHT_SERVERS) { //fuck you string immutability interview questions
-//                string = string + ("  \"" + s + "\",");
-//            }
+            for (String s: EthereumConstants.LIGHT_SERVERS) { //fuck you string immutability interview questions
+                string = string + ("  \"" + s + "\",");
+            }
             string = string + ("  \"" + EthereumConstants.LIGHT_SERV_PEER_NODE_ENODE_ADDRESS_4 + "\",");
             string = string + ("  \"" + EthereumConstants.LIGHT_SERV_PEER_NODE_ENODE_ADDRESS_AMIGO2 + "\"]");
             outputStreamWriter.append(string);
