@@ -135,6 +135,11 @@ public class EthereumClientService extends Service {
     public static final String PARAM_PUBLICATION_CONTENT_ITEM_NUMBER = "param.publication.content.item.number";
     private static final String UI_SUPPORT_POST_SENT = "ui.support.post.sent.pending.confirmation";
 
+    public static final String ETH_FETCH_COMMENTS = "eth.fetch.comments";
+    public static final String PARAM_NUM_COMMENTS = "param.num.comments";
+    public static final String UI_UPDATE_PUBLICATION_CONTENT_COMMENTS_LIST = "ui.update.publication.content.comments.list";
+    public static final String PARAM_ARRAY_PUBLICATION_CONTENT_COMMENTS_LIST = "param.array.publication.content.comments.list";
+
     private EthereumClient mEthereumClient;
     private org.ethereum.geth.Context mContext;
     private Node mNode;
@@ -226,6 +231,12 @@ public class EthereumClientService extends Service {
                     password = b.getString(PARAM_PASSWORD);
                     handleSupportPost(supportAmount, comment, whichPublication, contentIndex, password);
                     break;
+                case ETH_FETCH_COMMENTS:
+                    whichPublication = b.getInt(PARAM_WHICH_PUBLICATION);
+                    int publicationContentItemNumber = b.getInt(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER);
+                    int numComments = b.getInt(PARAM_NUM_COMMENTS);
+                    handleFetchComments(whichPublication, publicationContentItemNumber, numComments);
+                    break;
                 default:
                     break;
             }
@@ -306,6 +317,11 @@ public class EthereumClientService extends Service {
                     b.putInt(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, intent.getIntExtra(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, -1));
                     b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
                     break;
+                case ETH_FETCH_COMMENTS:
+                    b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
+                    b.putInt(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, intent.getIntExtra(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, -1));
+                    b.putInt(PARAM_NUM_COMMENTS, intent.getIntExtra(PARAM_NUM_COMMENTS, -1));
+                    break;
             }
             b.putString(MESSAGE_ACTION, intent.getAction());
             msg.setData(b);
@@ -354,7 +370,7 @@ public class EthereumClientService extends Service {
                 string = string + ("  \"" + s + "\",");
             }
             string = string + ("  \"" + EthereumConstants.LIGHT_SERV_PEER_NODE_ENODE_ADDRESS_4 + "\",");
-            string = string + ("  \"" + EthereumConstants.LIGHT_SERV_PEER_NODE_ENODE_ADDRESS_AMIGO2 + "\"]");
+            string = string + ("  \"" + EthereumConstants.LIGHT_SERV_PEER_NODE_ENODE_ADDRESS_METABARON + "\"]");
             outputStreamWriter.append(string);
             outputStreamWriter.close();
 
@@ -660,7 +676,7 @@ public class EthereumClientService extends Service {
                 ci.publishedBy = userName;
                 postJsonArray.add(convertContentItemToJSON(ci));
 
-                DBPublicationContentItem dbpci = new DBPublicationContentItem(index, (int)i, ci.publishedBy, contentString, ci.primaryImageUrl, json, ci.title, ci.primaryText, ci.publishedDate, contentUniqueSupporters, contentRevenue, contentNumComments);
+                DBPublicationContentItem dbpci = new DBPublicationContentItem(index, (int)i, ci.publishedBy, contentString, ci.primaryImageUrl, json, ci.title, ci.primaryText, ci.publishedDate, contentUniqueSupporters, contentRevenue, (int)contentNumComments);
                 dbSaveList.add(dbpci);
 
             }
@@ -847,6 +863,60 @@ public class EthereumClientService extends Service {
         }
     }
 
+    private void handleFetchComments(int whichPublication, int publicationContentItemNumber, int numComments) {
+        String contentString = "";
+        while (!mIsReady) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            BoundContract contract = Geth.bindContract(
+                    new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
+                    PUBLICATION_REGISTER_ABI, mEthereumClient);
+
+            CallOpts callOpts = Geth.newCallOpts();
+            callOpts.setContext(mContext);
+            Interfaces callData;
+
+            callData = Geth.newInterfaces(3);
+            Interface paramWhichPublication = Geth.newInterface();
+            Interface paramContentIndex = Geth.newInterface();
+            Interface paramCommentIndex = Geth.newInterface();
+
+            paramWhichPublication.setBigInt(new BigInt(whichPublication));
+            paramContentIndex.setBigInt(new BigInt(publicationContentItemNumber));
+
+            callData.set(0, paramWhichPublication);
+            callData.set(1, paramContentIndex);
+
+            //////////////////////////////////
+
+            ArrayList<String> commentsList = new ArrayList<>();
+            int counter = 0;
+            for (long i = numComments - 1; i >= 0 && counter <= 15; i--) {
+                paramCommentIndex.setBigInt(new BigInt(i));
+                callData.set(2, paramCommentIndex);
+                String commentString = contract.callForString(callOpts, "getContentCommentByIndex", callData);
+                commentsList.add(commentString);
+            }
+
+//            DatabaseHelper db = new DatabaseHelper(getBaseContext());
+//            db.saveComments();
+
+            Intent intent = new Intent(UI_UPDATE_PUBLICATION_CONTENT_COMMENTS_LIST);
+            intent.putStringArrayListExtra(PARAM_ARRAY_PUBLICATION_CONTENT_COMMENTS_LIST, commentsList);
+            LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+            bm.sendBroadcast(intent);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error retrieving contentList: " + e.getMessage());
+        }
+    }
+
     /*
      *  Methods that send Transactions to the Ethereum Blockckain
      */
@@ -960,6 +1030,8 @@ public class EthereumClientService extends Service {
             TransactOpts tOpts = new TransactOpts();
             tOpts.setContext(mContext);
             tOpts.setFrom(address);
+            BigInt gasPrice = new BigInt(Convert.toWei("40", Convert.Unit.GWEI).longValue());
+            tOpts.setGasPrice(gasPrice);
             tOpts.setSigner(new Signer() {
                 @Override
                 public Transaction sign(Address address, Transaction transaction) throws Exception {

@@ -16,13 +16,13 @@ public class DBPublicationContentItem implements Parcelable {
     public long publishedDate;
     public long uniqueSupporters;
     public String revenueWei;
-    public long numComments;
+    public int numComments;
 
 
     public DBPublicationContentItem (int publicationIndex, int publicationContentIndex,
                                      String publishedByEthAddress, String contentIPFS,
                                      String imageIPFS, String json, String title, String primaryText,
-                                     long publishedDate, long uniqueSupporters, String revenueWei, long numComments) {
+                                     long publishedDate, long uniqueSupporters, String revenueWei, int numComments) {
         this.publicationIndex = publicationIndex;
         this. publicationContentIndex = publicationContentIndex;
         this.publishedByEthAddress = publishedByEthAddress;
@@ -49,7 +49,7 @@ public class DBPublicationContentItem implements Parcelable {
         publishedDate = in.readLong();
         uniqueSupporters = in.readLong();
         revenueWei = in.readString();
-        numComments = in.readLong();
+        numComments = in.readInt();
     }
 
     @Override

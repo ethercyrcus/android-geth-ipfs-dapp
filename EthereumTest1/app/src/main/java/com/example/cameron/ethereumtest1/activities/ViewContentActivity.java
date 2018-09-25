@@ -1,16 +1,26 @@
 package com.example.cameron.ethereumtest1.activities;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.DataSetObserver;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.cameron.ethereumtest1.R;
@@ -24,12 +34,16 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_FETCH_COMMENTS;
+import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_SEND_ETH;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_SUPPORT_POST;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_AMOUNT;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_COMMENT;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_CONTENT_ITEM;
+import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_NUM_COMMENTS;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_PASSWORD;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_PUBLICATION_CONTENT_ITEM_NUMBER;
+import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_RECIPIENT;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_WHICH_PUBLICATION;
 
 /**
@@ -44,7 +58,21 @@ public class ViewContentActivity extends AppCompatActivity {
     private WebView mBodyWebView;
     private TextView mSupportersTextView;
     private TextView mRevenueTextView;
+    private TextView mNumCommentsTextButton;
+    private ListView mCommentsListView;
+    private boolean mShowingComments = false;
+    private ArrayList<String> mComments = new ArrayList<>();
     //private TextView mNumCommentsTextView; TODO: Add click for comments if there are some
+
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(EthereumClientService.UI_UPDATE_PUBLICATION_CONTENT_COMMENTS_LIST)) {
+                mComments = intent.getStringArrayListExtra(EthereumClientService.PARAM_ARRAY_PUBLICATION_CONTENT_COMMENTS_LIST);
+                updateCommentsList();
+            }
+        }
+    };
 
 
     @Override
@@ -52,6 +80,11 @@ public class ViewContentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_view_content);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(EthereumClientService.UI_UPDATE_PUBLICATION_CONTENT_COMMENTS_LIST);
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(this);
+        bm.registerReceiver(mBroadcastReceiver, filter);
 
         Intent intent = getIntent();
         ArrayList<Parcelable> items = intent.getParcelableArrayListExtra("content_items");
@@ -62,6 +95,8 @@ public class ViewContentActivity extends AppCompatActivity {
         mBodyWebView = (WebView) findViewById(R.id.contentBody);
         mSupportersTextView = (TextView) findViewById(R.id.supporters);
         mRevenueTextView = (TextView) findViewById(R.id.revenue);
+        mNumCommentsTextButton = (TextView) findViewById(R.id.commentsButton);
+        mCommentsListView = (ListView) findViewById(R.id.commentsListView);
 
         mTitleTextView.setText(mContentItem.title);
         String dateAndPublishedBy = "Published " + DataUtils.convertTimeStampToDateString(mContentItem.publishedDate)
@@ -70,6 +105,7 @@ public class ViewContentActivity extends AppCompatActivity {
         mBodyWebView.loadData(mContentItem.primaryText, "text/html; charset=UTF-8", null);
         mSupportersTextView.setText(mContentItem.uniqueSupporters + " supporters");
         mRevenueTextView.setText(DataUtils.formatAccountBalanceEther(mContentItem.revenueWei, 6));
+        mNumCommentsTextButton.setText("view " + mContentItem.numComments + " comment(s)");
         ImageView imageView = (ImageView) findViewById(R.id.image_content_activity);
         Glide.with(getBaseContext())
                 .load(EthereumConstants.IPFS_GATEWAY_URL + mContentItem.imageIPFS)
@@ -104,5 +140,22 @@ public class ViewContentActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    public void viewComments(View view) {
+        mNumCommentsTextButton.setText(mShowingComments ? "view " + mContentItem.numComments + " comment(s)" : "hide comment(s)");
+        startService(new Intent(ViewContentActivity.this, EthereumClientService.class)
+                .putExtra(PARAM_WHICH_PUBLICATION, mContentItem.publicationIndex)
+                .putExtra(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, mContentItem.publicationContentIndex)
+                .putExtra(PARAM_NUM_COMMENTS, mContentItem.numComments)
+                .setAction(ETH_FETCH_COMMENTS));
+    }
+
+
+
+    private void updateCommentsList() {
+        mCommentsListView.setVisibility(View.VISIBLE);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mComments);
+        mCommentsListView.setAdapter(adapter);
     }
 }

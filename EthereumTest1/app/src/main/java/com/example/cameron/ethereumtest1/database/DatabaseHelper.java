@@ -359,7 +359,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long publishedDate = c.getLong(c.getColumnIndex(KEY_PUBLISHED_DATE));
         long uniqueSupporters = c.getLong(c.getColumnIndex(KEY_PUBLICATION_CONTENT_UNIQUE_SUPPORTERS));
         String revenueWei = c.getString(c.getColumnIndex(KEY_PUBLICATION_CONTENT_REVENUE_WEI));
-        long numComments = c.getLong(c.getColumnIndex(KEY_PUBLICATION_CONTENT_NUM_COMMENTS));
+        int numComments = c.getInt(c.getColumnIndex(KEY_PUBLICATION_CONTENT_NUM_COMMENTS));
 
         return new DBPublicationContentItem(publicationIndex, publicationUserContentIndex, address,
                 contentIPFS, imageIPFS, json, title, primaryText, publishedDate, uniqueSupporters,
