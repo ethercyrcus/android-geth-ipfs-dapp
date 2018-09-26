@@ -136,7 +136,7 @@ public class UserContentRecyclerViewFragment extends Fragment{
         return v;
     }
 
-    private void loadContentList() {
+    public void loadContentList() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new UserFragmentContentItemRecyclerViewAdapter(getContext(), new DatabaseHelper(getContext()).getUserContentCursor(mSelectedAddress, 10), mListInteractionListener));
 
@@ -148,5 +148,9 @@ public class UserContentRecyclerViewFragment extends Fragment{
                 Log.e(TAG, "Error updating account balance: " + e.getMessage());
             }
         }
+    }
+
+    public void setSelectedAddress(String mSelectedAddress) {
+        this.mSelectedAddress = mSelectedAddress;
     }
 }

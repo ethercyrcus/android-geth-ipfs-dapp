@@ -86,7 +86,7 @@ public class UserFragment extends Fragment {
                     mEthBalanceTextView.setText(DataUtils.formatAccountBalanceEther(accountBalance, 6));
                     break;
                 case EthereumClientService.UI_UPDATE_USER_CONTENT_LIST:
-                    reloadUserContentList();
+                    //loadContentList();
                     break;
                 case EthereumClientService.UI_REGISTER_USER_PENDING_CONFIRMATION:
                     String username = intent.getStringExtra(EthereumClientService.PARAM_USER_NAME);
@@ -139,8 +139,9 @@ public class UserFragment extends Fragment {
         mViewPager = (ViewPager) v.findViewById(R.id.pager);
 
 
-        reloadUserInfo();
         mViewPager.setAdapter(buildAdapter());
+        reloadUserInfo();
+
         return v;
     }
 
@@ -206,11 +207,8 @@ public class UserFragment extends Fragment {
     }
 
     private void loadContentList() {
-
-    }
-
-    private void reloadUserContentList() {
-//        mRecyclerView.setAdapter(new UserFragmentContentItemRecyclerViewAdapter(getContext(), new DatabaseHelper(getContext()).getUserContentCursor(mSelectedAddress, 10), mListInteractionListener));
+        mViewPager.setAdapter(buildAdapter());
+        mViewPager.getAdapter().notifyDataSetChanged();
     }
 
     @Override
