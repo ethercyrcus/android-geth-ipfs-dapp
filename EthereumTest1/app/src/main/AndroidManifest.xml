@@ -42,6 +42,7 @@
             android:label="@string/title_activity_edit_content"
             android:theme="@style/AppTheme.Detail" />
         <activity android:name=".activities.EditContentBodyActivity"></activity>
+        <activity android:name=".activities.PublicationActivity"></activity>
     </application>
 
 </manifest>

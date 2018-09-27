@@ -20,6 +20,11 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+    <style name="ThemeOverlay.MyApp.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <!-- Parent theme sets colorControlNormal to textColorPrimary. -->
+        <item name="android:textColor">@color/lightGray</item>
+    </style>
+
     <style name="AppTheme.Main">
         <item name="android:windowExitTransition">@transition/main_exit</item>
         <item name="android:windowReenterTransition">@transition/main_reenter</item>
@@ -30,5 +35,7 @@
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowEnterTransition">@transition/detail_enter</item>
     </style>
+
+
 
 </resources>

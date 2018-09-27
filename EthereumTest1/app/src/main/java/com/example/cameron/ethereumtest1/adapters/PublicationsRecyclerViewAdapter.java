@@ -11,7 +11,7 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.example.cameron.ethereumtest1.R;
-import com.example.cameron.ethereumtest1.activities.ViewPublicationActivity;
+import com.example.cameron.ethereumtest1.activities.PublicationActivity;
 import com.example.cameron.ethereumtest1.database.DBPublication;
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 
@@ -42,7 +42,9 @@ public class PublicationsRecyclerViewAdapter extends RecyclerView.Adapter<Public
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(mContext, ViewPublicationActivity.class);
+                        Intent intent = new Intent(mContext, PublicationActivity.class);
+                        intent.putExtra("publication", pub);
+                        mContext.startActivity(intent);
                     }
                 });
             }

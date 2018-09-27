@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     Context mContext;
 
     //Used for upgrading the database
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     //name of our database file
     private static final String DATABASE_NAME = "circus_droid";
@@ -125,6 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_PUBLICATION_MIN_SUPPORT_COST_WEI = "KEY_PUBLICATION_MIN_SUPPORT_COST_WEI";
     public static final String KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE = "KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE";
     public static final String KEY_PUBLICATION_SUBSCRIBED_LOCALLY = "KEY_PUBLICATION_SUBSCRIBED_LOCALLY";
+    public static final String KEY_PUBLICATION_ADMIN_CLAIMS_OWED = "KEY_PUBLICATION_ADMIN_CLAIMS_OWED";
 
     public static final String TABLE_PUBLICATIONS = "table_publications";
     public static final String CREATE_TABLE_PUBLICATIONS = "CREATE TABLE " + TABLE_PUBLICATIONS
@@ -138,6 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE + " INTEGER,"
             + KEY_PUBLICATION_UNIQUE_SUPPORTERS + " INTEGER,"
             + KEY_PUBLICATION_SUBSCRIBED_LOCALLY + " BOOLEAN,"
+            + KEY_PUBLICATION_ADMIN_CLAIMS_OWED + " INTEGER,"
             + "UNIQUE(" + KEY_PUBLICATION_ID + ") ON CONFLICT IGNORE"
             + ")";
 
@@ -258,6 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE, pub.adminPaymentPercentage);
             values.put(KEY_PUBLICATION_UNIQUE_SUPPORTERS, pub.uniqueSupporters);
             values.put(KEY_PUBLICATION_SUBSCRIBED_LOCALLY, pub.subscribedLocally);
+            values.put(KEY_PUBLICATION_ADMIN_CLAIMS_OWED, pub.adminClaimsOwed);
 
             db.insertWithOnConflict(TABLE_PUBLICATIONS, null, values, CONFLICT_REPLACE);
         }
@@ -376,9 +379,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int adminPayPercentage = c.getInt(c.getColumnIndex(KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE));
         int uniqueSupporters = c.getInt(c.getColumnIndex(KEY_PUBLICATION_UNIQUE_SUPPORTERS));
         boolean subscribed = c.getInt(c.getColumnIndex(KEY_PUBLICATION_SUBSCRIBED_LOCALLY)) == 1;
+        long adminClaimsOwed = c.getLong(c.getColumnIndex(KEY_PUBLICATION_ADMIN_CLAIMS_OWED));
 
         return new DBPublication(publicationID, name, metaData, adminAddress, numPublished,
-                minSupportCost, adminPayPercentage, uniqueSupporters, subscribed);
+                minSupportCost, adminPayPercentage, uniqueSupporters, subscribed, adminClaimsOwed);
     }
 
     public ArrayList<DBPublication> getPublicationsWeCanPublishTo(String selectedAddress) {

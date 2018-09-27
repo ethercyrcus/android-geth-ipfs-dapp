@@ -45,9 +45,11 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
     private final Context mContext;
     private Spinner mTagSpinner;
     private CursorAdapter mCursorAdapter;
+    private boolean mIncludeFilter;
 
-    public PublicationItemRecyclerViewAdapter(Context context, Cursor cursor) {
+    public PublicationItemRecyclerViewAdapter(Context context, Cursor cursor, boolean includeFilter) {
         mContext = context;
+        mIncludeFilter = includeFilter;
         mCursorAdapter = new CursorAdapter(mContext, cursor, 0) {
             @Override
             public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -121,20 +123,24 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if (position != 0) {
+        if (position != 0 && mIncludeFilter) {
             mCursorAdapter.getCursor().moveToPosition(position - 1);
+            mCursorAdapter.bindView(holder.mView, mContext, mCursorAdapter.getCursor());
+        } else if (!mIncludeFilter) {
+            mCursorAdapter.getCursor().moveToPosition(position);
             mCursorAdapter.bindView(holder.mView, mContext, mCursorAdapter.getCursor());
         }
     }
 
     @Override
     public int getItemCount() {
-        return mCursorAdapter.getCount() + 1;
+        int additionalCount = mIncludeFilter ? 1 : 0;
+        return mCursorAdapter.getCount() + additionalCount;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? TYPE_HEADER : TYPE_ITEM;
+        return position == 0 && mIncludeFilter ? TYPE_HEADER : TYPE_ITEM;
     }
 
     private void setTagSpinnerOptions() {

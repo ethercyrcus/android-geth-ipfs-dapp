@@ -25,7 +25,17 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_alignParentLeft="true"
-                android:visibility="gone"/>
+                android:visibility="invisible"/>
+
+            <ImageButton
+                android:id="@+id/profPicButton"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_account_edit"
+                android:onClick="updateMetaData"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_alignParentLeft="true"/>
 
             <TextView
                 android:id="@+id/userName"

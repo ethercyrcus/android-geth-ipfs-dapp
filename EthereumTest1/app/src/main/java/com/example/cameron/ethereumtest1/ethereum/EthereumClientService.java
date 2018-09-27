@@ -845,9 +845,10 @@ public class EthereumClientService extends Service {
                 String metaDataString = returnData2.get(1).getString();
                 String adminString = returnData2.get(2).getAddress().getHex();
                 long numPublishedLong = returnData2.get(4).getBigInt().getInt64();
+                long numSupporters = returnData2.get(7).getBigInt().getInt64();
+                long adminClaimsOwedLong = returnData2.get(8).getBigInt().getInt64();
 
-
-                DBPublication dbPub = new DBPublication((int)i, nameString, metaDataString, adminString, (int)numPublishedLong, 0, 0, 0, false);
+                DBPublication dbPub = new DBPublication((int)i, nameString, metaDataString, adminString, (int)numPublishedLong, 0, 0, (int)numSupporters, false, adminClaimsOwedLong);
                 dbSaveList.add(dbPub);
 
             }

@@ -10,12 +10,14 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +53,7 @@ public class UserFragment extends Fragment {
     private TextView mEthAddressTextView;
     private TextView mEthBalanceTextView;
     private Button mRegisterButton;
+    private ImageButton mUpdateProfPicButton;
     private ViewPager mViewPager;
 
     private String mSelectedAddress;
@@ -77,7 +80,7 @@ public class UserFragment extends Fragment {
                                 .into(mUserIconImageView);
                         PrefUtils.saveSelectedAccountUserIconImageURLContext(getActivity(), userIconImageUrl);
                     } else {
-                        mUserIconImageView.setVisibility(View.GONE);
+                        mUserIconImageView.setVisibility(View.INVISIBLE);
                     }
 
                     break;
@@ -137,6 +140,7 @@ public class UserFragment extends Fragment {
         mEthBalanceTextView = (TextView)v.findViewById(R.id.ethBalance);
         mRegisterButton = (Button) v.findViewById(R.id.registerButton);
         mViewPager = (ViewPager) v.findViewById(R.id.pager);
+        mUpdateProfPicButton = (ImageButton) v.findViewById(R.id.profPicButton);
 
 
         mViewPager.setAdapter(buildAdapter());
@@ -182,14 +186,16 @@ public class UserFragment extends Fragment {
         String userName = PrefUtils.getSelectedAccountUserName(getActivity());
         String userIconImageUrl = PrefUtils.getSelectedAccountUserIconImageUrl(getActivity());
         mUsernameTextView.setText(userName);
-        if (!userIconImageUrl.equals("meta")){
+        if (!userIconImageUrl.equals("meta") && !TextUtils.isEmpty(userIconImageUrl)){
             mUserIconImageView.setVisibility(View.VISIBLE);
+            mUpdateProfPicButton.setVisibility(View.INVISIBLE);
             //Loading image from url into imageView
             Glide.with(UserFragment.this)
                     .load(EthereumConstants.IPFS_GATEWAY_URL + userIconImageUrl)
                     .into(mUserIconImageView);
         } else {
-            mUserIconImageView.setVisibility(View.GONE);
+            mUserIconImageView.setVisibility(View.INVISIBLE);
+            mUpdateProfPicButton.setVisibility(View.VISIBLE);
         }
         if (PrefUtils.shouldUpdateAccountUserName(getActivity())) {
             try {

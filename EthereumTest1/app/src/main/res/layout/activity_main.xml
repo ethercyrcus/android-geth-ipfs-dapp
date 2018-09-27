@@ -244,7 +244,7 @@
         android:tint="@color/carInterior"
         app:borderWidth="0dp"
         app:elevation="6dp"
-        android:onClick="sendEth"/>
+        android:onClick="createPublication"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab1"
@@ -254,13 +254,13 @@
         android:layout_alignParentRight="true"
         android:layout_above="@id/selector"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_account_edit"
+        android:src="@drawable/ic_ethereum_dark"
         android:tint="@color/carInterior"
         app:backgroundTint="@android:color/white"
         android:scaleType="center"
         app:borderWidth="0dp"
         app:elevation="6dp"
-        android:onClick="updateMetaData"/>
+        android:onClick="sendEth"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -114,7 +114,7 @@ public class PublicationContentListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mDatabaseHelper = new DatabaseHelper(getContext());
         loadContentFeed(PrefUtils.getSelectedPublication(getContext()));
-        mRecyclerView.setAdapter(new PublicationItemRecyclerViewAdapter(getContext(), mDatabaseHelper.getPublicationContentCursor(PrefUtils.getSelectedPublication(getContext()), 20)));
+        mRecyclerView.setAdapter(new PublicationItemRecyclerViewAdapter(getContext(), mDatabaseHelper.getPublicationContentCursor(PrefUtils.getSelectedPublication(getContext()), 20), true));
     }
 
     private void loadContentFeed(int whichPub) {
@@ -133,7 +133,7 @@ public class PublicationContentListFragment extends Fragment {
     }
 
     private void reloadContentList(int whichPub, ArrayList<String> revenueArray) {
-        mRecyclerView.setAdapter(new PublicationItemRecyclerViewAdapter(getContext(), mDatabaseHelper.getPublicationContentCursor(whichPub, 12)));
+        mRecyclerView.setAdapter(new PublicationItemRecyclerViewAdapter(getContext(), mDatabaseHelper.getPublicationContentCursor(whichPub, 12), true));
     }
 
     @Override
