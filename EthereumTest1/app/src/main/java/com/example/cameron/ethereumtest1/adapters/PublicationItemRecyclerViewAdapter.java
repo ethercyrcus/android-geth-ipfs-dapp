@@ -32,6 +32,7 @@ import com.example.cameron.ethereumtest1.util.PrefUtils;
 import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -143,17 +144,20 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
         return position == 0 && mIncludeFilter ? TYPE_HEADER : TYPE_ITEM;
     }
 
+    HashMap<Integer, Integer> idToSpinnerOptions = new HashMap<>();
+
     private void setTagSpinnerOptions() {
         ArrayList<String> tagOptions = new ArrayList<>();
         final ArrayList<DBPublication> pubs = new DatabaseHelper(mContext).getPublicationsToView();
-        for (DBPublication pub: pubs) {
-            tagOptions.add(pub.name);
+        for (int i = 0; i < pubs.size(); i++) {
+            idToSpinnerOptions.put(pubs.get(i).publicationID, i);
+            tagOptions.add(pubs.get(i).name);
         }
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_dropdown_content_list, tagOptions);
         mTagSpinner.setAdapter(spinnerArrayAdapter);
         int selection = PrefUtils.getSelectedPublication(mContext);
-        mTagSpinner.setSelection(selection, false);
+        mTagSpinner.setSelection(idToSpinnerOptions.get(selection), false);
         mTagSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
