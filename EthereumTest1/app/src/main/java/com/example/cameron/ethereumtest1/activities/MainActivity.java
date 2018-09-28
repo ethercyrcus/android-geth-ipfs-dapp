@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements
                 final long blockNumber = intent.getLongExtra(EthereumClientService.PARAM_BLOCK_NUMBER, 0);
                 mSynchInfoTextView.setText(DataUtils.formatBlockNumber(blockNumber));
                 ObjectAnimator colorAnim = ObjectAnimator.ofInt(mSynchInfoTextView, "textColor",
-                        Color.GREEN, Color.WHITE);
+                        Color.CYAN, Color.WHITE);
                 colorAnim.setEvaluator(new ArgbEvaluator());
                 colorAnim.setDuration(BLOCK_NUMBER_FADE_TIME_MILLI);
                 colorAnim.start();
@@ -537,10 +537,10 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, mPublicationContentListFragment);
         transaction.commit();
-        mContentListButton.setColorFilter(Color.WHITE);
-        mPublicationsButton.setColorFilter(Color.DKGRAY);
-        mUserFragmentButton.setColorFilter(Color.DKGRAY);
-        mEthereumButton.setColorFilter(Color.DKGRAY);
+        mContentListButton.setColorFilter(Color.CYAN);
+        mPublicationsButton.setColorFilter(Color.WHITE);
+        mUserFragmentButton.setColorFilter(Color.WHITE);
+        mEthereumButton.setColorFilter(Color.WHITE);
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_CONTENT_LIST);
         showFAB(true);
     }
@@ -551,10 +551,10 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, mPublicationsFragment);
         transaction.commit();
-        mContentListButton.setColorFilter(Color.DKGRAY);
-        mPublicationsButton.setColorFilter(Color.WHITE);
-        mUserFragmentButton.setColorFilter(Color.DKGRAY);
-        mEthereumButton.setColorFilter(Color.DKGRAY);
+        mContentListButton.setColorFilter(Color.WHITE);
+        mPublicationsButton.setColorFilter(Color.CYAN);
+        mUserFragmentButton.setColorFilter(Color.WHITE);
+        mEthereumButton.setColorFilter(Color.WHITE);
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_PUBLICATION_LIST);
         showFAB(true);
     }
@@ -566,10 +566,10 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, mUserFragment);
         transaction.commit();
-        mContentListButton.setColorFilter(Color.DKGRAY);
-        mPublicationsButton.setColorFilter(Color.DKGRAY);
-        mUserFragmentButton.setColorFilter(Color.WHITE);
-        mEthereumButton.setColorFilter(Color.DKGRAY);
+        mContentListButton.setColorFilter(Color.WHITE);
+        mPublicationsButton.setColorFilter(Color.WHITE);
+        mUserFragmentButton.setColorFilter(Color.CYAN);
+        mEthereumButton.setColorFilter(Color.WHITE);
 
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_USER_FRAGMENT);
         showFAB(true);
@@ -581,10 +581,10 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, mEthTransactionListFragment);
         transaction.commit();
-        mContentListButton.setColorFilter(Color.DKGRAY);
-        mPublicationsButton.setColorFilter(Color.DKGRAY);
-        mUserFragmentButton.setColorFilter(Color.DKGRAY);
-        mEthereumButton.setColorFilter(Color.WHITE);
+        mContentListButton.setColorFilter(Color.WHITE);
+        mPublicationsButton.setColorFilter(Color.WHITE);
+        mUserFragmentButton.setColorFilter(Color.WHITE);
+        mEthereumButton.setColorFilter(Color.CYAN);
 
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_TRANSACTION_FRAGMENT);
         showFAB(true);
@@ -615,11 +615,13 @@ public class MainActivity extends AppCompatActivity implements
             mFloatingActionButton1.animate().translationY(0);
             mFloatingActionButton2.animate().translationY(0);
             mFloatingActionButton3.animate().translationY(0);
+            mFloatingActionButton.animate().rotationBy(180);
         } else {
             mIsFabOpen = true;
             mFloatingActionButton1.animate().translationY(-getResources().getDimension(R.dimen.standard_60));
             mFloatingActionButton2.animate().translationY(-getResources().getDimension(R.dimen.standard_120));
             mFloatingActionButton3.animate().translationY(-getResources().getDimension(R.dimen.standard_180));
+            mFloatingActionButton.animate().rotationBy(180);
         }
     }
 

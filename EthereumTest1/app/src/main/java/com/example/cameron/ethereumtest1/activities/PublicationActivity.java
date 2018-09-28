@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.cameron.ethereumtest1.R;
@@ -14,6 +16,7 @@ import com.example.cameron.ethereumtest1.adapters.PublicationItemRecyclerViewAda
 import com.example.cameron.ethereumtest1.database.DBPublication;
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.ethereum.EthereumClientService;
+import com.example.cameron.ethereumtest1.util.PrefUtils;
 
 public class PublicationActivity extends AppCompatActivity {
 
@@ -22,8 +25,9 @@ public class PublicationActivity extends AppCompatActivity {
     private DBPublication mPublication;
     private RecyclerView mRecyclerView;
     private TextView mPublicationTitleTextView;
-    private TextView mInfoTextView;
-    private Toolbar mToolBar;
+    private TextView mSupportersTextView;
+    private TextView mNumArticlesTextView;
+    private Button mManagePublicationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +36,24 @@ public class PublicationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_publication);
 
         Intent intent = getIntent();
-        DBPublication pub = intent.getParcelableExtra("publication");
+        mPublication = intent.getParcelableExtra("publication");
         mRecyclerView = (RecyclerView) findViewById(R.id.publicationContentList);
         mPublicationTitleTextView = (TextView) findViewById(R.id.publicationTitle);
-        //mToolBar = (Toolbar) findViewById(R.id.toolBar);
+        mSupportersTextView = (TextView) findViewById(R.id.supporters);
+        mNumArticlesTextView = (TextView) findViewById(R.id.numArticles);
+        mManagePublicationButton = (Button) findViewById(R.id.managePublication);
 
-        mPublicationTitleTextView.setText(pub.name);
-        //mToolBar.setTitle(pub.name);
-        //mToolBar.setTitleTextColor(Color.WHITE);
-        loadContentList(pub.publicationID);
+        mPublicationTitleTextView.setText(mPublication.name);
+        mSupportersTextView.setText(mPublication.uniqueSupporters + " supporters");
+        mNumArticlesTextView.setText(mPublication.numPublished + " articles");
+
+        String admin = mPublication.adminAddress;
+        String selectedAddress = PrefUtils.getSelectedAccountAddress(this);
+        if (admin.equals(selectedAddress)) {
+            mManagePublicationButton.setVisibility(View.VISIBLE);
+        }
+
+        loadContentList(mPublication.publicationID);
     }
 
 
@@ -54,10 +67,17 @@ public class PublicationActivity extends AppCompatActivity {
                 startService(new Intent(this, EthereumClientService.class)
                         .putExtra(EthereumClientService.PARAM_WHICH_PUBLICATION, whichPub).setAction(EthereumClientService.ETH_FETCH_PUBLICATION_CONTENT));
             } catch (Exception e) {
-                Log.e(TAG, "Error updating account balance: " + e.getMessage());
+                Log.e(TAG, "Error updating pub info: " + e.getMessage());
             }
        // }
     }
 
 
+    public void managePublication(View view) {
+
+    }
+
+    public void checkAuthorClaim(View view) {
+
+    }
 }

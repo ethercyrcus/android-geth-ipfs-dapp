@@ -1,5 +1,7 @@
 package com.example.cameron.ethereumtest1.util;
 
+import android.support.annotation.ColorInt;
+
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 
 import java.text.DecimalFormat;
@@ -10,6 +12,9 @@ import java.util.Date;
  */
 
 public class DataUtils {
+
+    @ColorInt
+    public static final int TEAL = 0x00F0FF00;
 
     public static String convertTimeStampToDateString(long timestamp) {
         Date date = new Date(timestamp);
