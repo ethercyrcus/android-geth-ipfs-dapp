@@ -103,69 +103,6 @@
         android:layout_below="@id/statusBar"/>
 
     <LinearLayout
-        android:id="@+id/networkSynch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/statusBar"
-        android:layout_above="@+id/selector"
-        android:background="@android:color/darker_gray"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:onClick="closeNetworkSynch"/>
-        <TextView
-            android:id="@+id/synchLog"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"/>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/accountPage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/statusBar"
-        android:background="@android:color/transparent"
-        android:visibility="gone">
-
-        <ImageButton
-            android:id="@+id/closeAccountPage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:onClick="closeAccountPage"/>
-
-        <TextView
-            android:id="@+id/accountList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textIsSelectable="true"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:background="@android:color/white"
-            android:layout_below="@id/closeAccountPage"/>
-
-        <Button
-            android:id="@+id/createAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/accountList"
-            android:text="new account"
-            android:onClick="createAccount"/>
-
-    </RelativeLayout>
-    <LinearLayout
         android:id="@id/selector"
         android:layout_width="match_parent"
         android:layout_height="48dp"
