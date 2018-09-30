@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,9 +23,9 @@ import com.example.cameron.ethereumtest1.util.PrefUtils;
 
 import java.util.ArrayList;
 
-public class PublicationsFragment extends Fragment {
+public class PublicationListFragment extends Fragment {
 
-    private final static String TAG = PublicationsFragment.class.getName();
+    private final static String TAG = PublicationListFragment.class.getName();
 
     private RecyclerView mSubscribedRecyclerView;
     private RecyclerView mAllPublicationsRecyclerView;
@@ -41,8 +42,8 @@ public class PublicationsFragment extends Fragment {
         }
     };
 
-    public static PublicationsFragment newInstance() {
-        PublicationsFragment fragment = new PublicationsFragment();
+    public static PublicationListFragment newInstance() {
+        PublicationListFragment fragment = new PublicationListFragment();
         return fragment;
     }
 
@@ -71,7 +72,7 @@ public class PublicationsFragment extends Fragment {
 
     private void reloadPublicationsDB() {
         mAllPublicationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAllPublicationsRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter(getContext(), new DatabaseHelper(getContext()).getPublicationsCursor()));
+        mAllPublicationsRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter((AppCompatActivity) getActivity(), new DatabaseHelper(getContext()).getPublicationsCursor()));
     }
 
     private void loadPublicationsFromEthereumChain() {

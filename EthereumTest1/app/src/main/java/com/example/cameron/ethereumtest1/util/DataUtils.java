@@ -53,6 +53,8 @@ public class DataUtils {
                 return "CREATE PUBLICATION";
             case DatabaseHelper.TX_ACTION_ID_SUPPORT_POST:
                 return "SUPPORT_POST";
+            case DatabaseHelper.TX_ACTION_ID_WITHDRAW_AUTHOR_CLAIM:
+                return "WITHDRAW_AUTHOR_CLAIM";
             case DatabaseHelper.TX_ACTION_ID_PUBLISH_TO_PUBLICATION:
             default:
                 return "PUBLISH PUBLICATION";

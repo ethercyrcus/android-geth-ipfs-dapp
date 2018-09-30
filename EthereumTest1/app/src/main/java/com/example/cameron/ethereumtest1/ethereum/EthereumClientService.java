@@ -144,6 +144,10 @@ public class EthereumClientService extends Service {
     public static final String UI_UPDATE_AMOUNT_OWED_AUTHOR = "ui.update.amount.owed.author";
     public static final String PARAM_AMOUNT_OWED_AUTHOR = "param.amount.owed.author";
 
+    public static final String ETH_WITHDRAW_AUTHOR_CLAIM = "eth.withdraw.author.claim";
+    public static final String UI_WITHDRAW_AUTHOR_CLAIM_SENT = "ui.withdraw.author.claim.sent";
+
+
     private EthereumClient mEthereumClient;
     private org.ethereum.geth.Context mContext;
     private Node mNode;
@@ -246,6 +250,12 @@ public class EthereumClientService extends Service {
                     String selectedUser = b.getString(PARAM_ADDRESS_STRING);
                     handleFetchAuthorClaimAmount(whichPublication, selectedUser);
                     break;
+                case ETH_WITHDRAW_AUTHOR_CLAIM:
+                    whichPublication = b.getInt(PARAM_WHICH_PUBLICATION);
+                    String selectedUserForWithdraw = b.getString(PARAM_ADDRESS_STRING);
+                    password = b.getString(PARAM_PASSWORD);
+                    handleWithdrawAuthorClaim(whichPublication, selectedUserForWithdraw, password);
+                    break;
                 default:
                     break;
             }
@@ -334,6 +344,11 @@ public class EthereumClientService extends Service {
                 case ETH_FETCH_AUTHOR_CLAIM_AMOUNT:
                     b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
                     b.putString(PARAM_ADDRESS_STRING, intent.getStringExtra(PARAM_ADDRESS_STRING));
+                    break;
+                case ETH_WITHDRAW_AUTHOR_CLAIM:
+                    b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
+                    b.putString(PARAM_ADDRESS_STRING, intent.getStringExtra(PARAM_ADDRESS_STRING));
+                    b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
                     break;
             }
             b.putString(MESSAGE_ACTION, intent.getAction());
@@ -970,7 +985,7 @@ public class EthereumClientService extends Service {
             LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
             bm.sendBroadcast(intent);
         } catch (Exception e) {
-            Log.e(TAG, "Error retrieving username: " + e.getMessage());
+            Log.e(TAG, "Error fetching author claim: " + e.getMessage());
         }
     }
 
@@ -1407,6 +1422,60 @@ public class EthereumClientService extends Service {
             e.printStackTrace();
         }
         Intent intent = new Intent(UI_SUPPORT_POST_SENT);
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+        bm.sendBroadcast(intent);
+        pollForTransactionConfirmation(transactionHash, ethereumTransaction);
+    }
+
+    private void handleWithdrawAuthorClaim(int whichPublication, String selectedUserForWithdraw, final String password) {
+        Hash transactionHash = null;
+        DBEthereumTransaction ethereumTransaction = null;
+        try {
+            final KeyStore mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)  + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
+
+            BoundContract publicationContract = Geth.bindContract(
+                    new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
+                    PUBLICATION_REGISTER_ABI, mEthereumClient);
+
+            Address address = Geth.newAddressFromHex(PrefUtils.getSelectedAccountAddress(getBaseContext()));
+
+            TransactOpts tOpts = new TransactOpts();
+            tOpts.setContext(mContext);
+            tOpts.setFrom(address);
+            tOpts.setGasLimit(1000000);
+            tOpts.setSigner(new Signer() {
+                @Override
+                public Transaction sign(Address address, Transaction transaction) throws Exception {
+                    Account account = mKeyStore.getAccounts().get(PrefUtils.getSelectedAccountNum(getBaseContext()));
+                    mKeyStore.unlock(account, password);
+                    Transaction signed = mKeyStore.signTx(account, transaction, new BigInt(4));
+                    mKeyStore.lock(account.getAddress());
+                    return signed;
+                }
+            });
+            long noncePending  = mEthereumClient.getPendingNonceAt(mContext, address);
+            tOpts.setNonce(noncePending);
+
+            // call supportPost
+            Interfaces callParams = Geth.newInterfaces(1);
+
+            Interface paramWhichPub = Geth.newInterface();
+
+            paramWhichPub.setBigInt(new BigInt(whichPublication));
+
+            callParams.set(0, paramWhichPub);
+
+            final Transaction txWithdrawAuthorClaim = publicationContract.transact(tOpts, "withdrawAuthorClaim", callParams);
+
+            transactionHash = txWithdrawAuthorClaim.getHash();
+            ethereumTransaction = new DBEthereumTransaction(address.getHex().toString(), transactionHash.getHex().toString(), DatabaseHelper.TX_ACTION_ID_WITHDRAW_AUTHOR_CLAIM, "withdraw from pubID: " + whichPublication, System.currentTimeMillis(), 0, false, 0);
+            DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+            helper.saveTransactionInfo(ethereumTransaction);
+            mEthereumClient.sendTransaction(mContext, txWithdrawAuthorClaim);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(UI_WITHDRAW_AUTHOR_CLAIM_SENT);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
         bm.sendBroadcast(intent);
         pollForTransactionConfirmation(transactionHash, ethereumTransaction);

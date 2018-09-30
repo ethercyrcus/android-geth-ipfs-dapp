@@ -2,6 +2,7 @@ package com.example.cameron.ethereumtest1.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,6 +46,6 @@ public class UserPublicationsRecyclerViewFragment extends Fragment {
 
     private void reloadPublicationsDB() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter(getContext(), new DatabaseHelper(getContext()).getPublicationsWeCanPublishToCursor(mSelectedAddress)));
+        mRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter((AppCompatActivity) getActivity(), new DatabaseHelper(getContext()).getPublicationsWeCanPublishToCursor(mSelectedAddress)));
     }
 }

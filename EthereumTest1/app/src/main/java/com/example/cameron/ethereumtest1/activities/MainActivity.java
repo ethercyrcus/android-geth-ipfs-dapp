@@ -3,7 +3,6 @@ package com.example.cameron.ethereumtest1.activities;
 import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -32,9 +31,10 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.cameron.ethereumtest1.R;
+import com.example.cameron.ethereumtest1.database.DBPublication;
 import com.example.cameron.ethereumtest1.database.DBUserContentItem;
 import com.example.cameron.ethereumtest1.fragments.EthTransactionListFragment;
-import com.example.cameron.ethereumtest1.fragments.PublicationsFragment;
+import com.example.cameron.ethereumtest1.fragments.PublicationListFragment;
 import com.example.cameron.ethereumtest1.model.ContentItem;
 import com.example.cameron.ethereumtest1.ethereum.EthereumClientService;
 import com.example.cameron.ethereumtest1.fragments.PublicationContentListFragment;
@@ -82,14 +82,15 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton mSwitchAccountButton;
 
     private PublicationContentListFragment mPublicationContentListFragment;
-    private PublicationsFragment mPublicationsFragment;
+    private PublicationListFragment mPublicationListFragment;
     private UserFragment mUserFragment;
     private EthTransactionListFragment mEthTransactionListFragment;
+    private PublicationFragment mPublicationFragment;
 
     private ImageButton mContentListButton;
     private ImageButton mUserFragmentButton;
     private ImageButton mEthereumButton;
-    private ImageButton mPublicationsButton;
+    private ImageButton mPublicationListButton;
 
     private FloatingActionButton mFloatingActionButton;
     private FloatingActionButton mFloatingActionButton1;
@@ -139,12 +140,12 @@ public class MainActivity extends AppCompatActivity implements
         mContentListButton = (ImageButton) findViewById(R.id.button_content_list);
         mUserFragmentButton = (ImageButton) findViewById(R.id.user_fragment_button);
         mEthereumButton = (ImageButton) findViewById(R.id.button_ethereum);
-        mPublicationsButton = (ImageButton) findViewById(R.id.button_publications);
+        mPublicationListButton = (ImageButton) findViewById(R.id.button_publications);
 
         mContentListButton.setColorFilter(Color.WHITE);
         mUserFragmentButton.setColorFilter(Color.DKGRAY);
         mEthereumButton.setColorFilter(Color.DKGRAY);
-        mPublicationsButton.setColorFilter(Color.DKGRAY);
+        mPublicationListButton.setColorFilter(Color.DKGRAY);
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         mFloatingActionButton1 = (FloatingActionButton) findViewById(R.id.fab1);
         mFloatingActionButton2 = (FloatingActionButton) findViewById(R.id.fab2);
@@ -538,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements
         transaction.replace(R.id.fragment_container, mPublicationContentListFragment);
         transaction.commit();
         mContentListButton.setColorFilter(Color.CYAN);
-        mPublicationsButton.setColorFilter(Color.WHITE);
+        mPublicationListButton.setColorFilter(Color.WHITE);
         mUserFragmentButton.setColorFilter(Color.WHITE);
         mEthereumButton.setColorFilter(Color.WHITE);
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_CONTENT_LIST);
@@ -546,13 +547,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void showPublications(View view) {
-        if (mPublicationsFragment == null)
-            mPublicationsFragment = PublicationsFragment.newInstance();
+        if (mPublicationListFragment == null)
+            mPublicationListFragment = PublicationListFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mPublicationsFragment);
+        transaction.replace(R.id.fragment_container, mPublicationListFragment);
         transaction.commit();
         mContentListButton.setColorFilter(Color.WHITE);
-        mPublicationsButton.setColorFilter(Color.CYAN);
+        mPublicationListButton.setColorFilter(Color.CYAN);
         mUserFragmentButton.setColorFilter(Color.WHITE);
         mEthereumButton.setColorFilter(Color.WHITE);
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_PUBLICATION_LIST);
@@ -567,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements
         transaction.replace(R.id.fragment_container, mUserFragment);
         transaction.commit();
         mContentListButton.setColorFilter(Color.WHITE);
-        mPublicationsButton.setColorFilter(Color.WHITE);
+        mPublicationListButton.setColorFilter(Color.WHITE);
         mUserFragmentButton.setColorFilter(Color.CYAN);
         mEthereumButton.setColorFilter(Color.WHITE);
 
@@ -582,12 +583,30 @@ public class MainActivity extends AppCompatActivity implements
         transaction.replace(R.id.fragment_container, mEthTransactionListFragment);
         transaction.commit();
         mContentListButton.setColorFilter(Color.WHITE);
-        mPublicationsButton.setColorFilter(Color.WHITE);
+        mPublicationListButton.setColorFilter(Color.WHITE);
         mUserFragmentButton.setColorFilter(Color.WHITE);
         mEthereumButton.setColorFilter(Color.CYAN);
 
         PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_TRANSACTION_FRAGMENT);
         showFAB(true);
+    }
+
+    public void showPublicationFragment(DBPublication publication) {
+        if (mPublicationFragment == null) {
+            mPublicationFragment = PublicationFragment.newInstance(publication);
+        } else if (mPublicationFragment.getPublication().publicationID != publication.publicationID) {
+            mPublicationFragment = PublicationFragment.newInstance(publication);
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mPublicationFragment);
+        transaction.commit();
+        mContentListButton.setColorFilter(Color.WHITE);
+        mPublicationListButton.setColorFilter(Color.CYAN);
+        mUserFragmentButton.setColorFilter(Color.WHITE);
+        mEthereumButton.setColorFilter(Color.WHITE);
+
+        PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_PUBLICATION_LIST);
+        showFAB(false);
     }
 
     public void scrollToTop(View view) {
@@ -622,6 +641,39 @@ public class MainActivity extends AppCompatActivity implements
             mFloatingActionButton2.animate().translationY(-getResources().getDimension(R.dimen.standard_120));
             mFloatingActionButton3.animate().translationY(-getResources().getDimension(R.dimen.standard_180));
             mFloatingActionButton.animate().rotationBy(180);
+        }
+    }
+
+    public void checkAuthorClaim(View view) {
+        DBPublication pub = mPublicationFragment.getPublication();
+        if (!mPublicationFragment.mReadyToClaimAuthorFunds) {
+            startService(new Intent(this, EthereumClientService.class)
+                    .putExtra(EthereumClientService.PARAM_WHICH_PUBLICATION, pub.publicationID)
+                    .putExtra(EthereumClientService.PARAM_ADDRESS_STRING, PrefUtils.getSelectedAccountAddress(this))
+                    .setAction(EthereumClientService.ETH_FETCH_AUTHOR_CLAIM_AMOUNT));
+        } else {
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.dialog_withdraw_author_claims);
+
+            final EditText passwordEditText = (EditText) dialog.findViewById(R.id.editPassword);
+            final TextView whichPubID = (TextView)dialog.findViewById(R.id.whichPublicationID);
+            whichPubID.setText("PublicationID: " + pub.publicationID);
+
+            Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonSubmit);
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String password = passwordEditText.getText().toString();
+                    startService(new Intent(getApplicationContext(), EthereumClientService.class)
+                            .putExtra(EthereumClientService.PARAM_WHICH_PUBLICATION, mPublicationFragment.getPublication().publicationID)
+                            .putExtra(EthereumClientService.PARAM_ADDRESS_STRING, PrefUtils.getSelectedAccountAddress(getApplicationContext()))
+                            .putExtra(EthereumClientService.PARAM_PASSWORD, password)
+                            .setAction(EthereumClientService.ETH_WITHDRAW_AUTHOR_CLAIM));
+                    dialog.dismiss();
+                    animateFabMenu(null);
+                }
+            });
+            dialog.show();
         }
     }
 

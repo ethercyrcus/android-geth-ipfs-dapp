@@ -1,5 +1,4 @@
 package com.example.cameron.ethereumtest1.fragments;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,41 +7,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.cameron.ethereumtest1.R;
-import com.example.cameron.ethereumtest1.adapters.UserFragmentContentItemRecyclerViewAdapter;
 import com.example.cameron.ethereumtest1.adapters.UserFragmentPagerAdapter;
 import com.example.cameron.ethereumtest1.database.DBUserContentItem;
-import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.ethereum.EthereumConstants;
 import com.example.cameron.ethereumtest1.ethereum.EthereumClientService;
-import com.example.cameron.ethereumtest1.model.ContentItem;
-import com.example.cameron.ethereumtest1.model.UserFragmentContentItem;
 import com.example.cameron.ethereumtest1.util.DataUtils;
 import com.example.cameron.ethereumtest1.util.PrefUtils;
-import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.List;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_FETCH_ACCOUNT_BALANCE;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_FETCH_ACCOUNT_USER_INFO;
-import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_FETCH_USER_CONTENT_LIST;
-import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.ETH_PUBLISH_USER_CONTENT_TO_PUBLICATION;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_ADDRESS_STRING;
-import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_PASSWORD;
-import static com.example.cameron.ethereumtest1.ethereum.EthereumClientService.PARAM_USER_CONTENT_INDEX;
 
 public class UserFragment extends Fragment {
 
