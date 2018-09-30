@@ -27,6 +27,38 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                            <entry key="launcher">
+                              <value>
+                                <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="90" />
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="000000" />
+                                      <entry key="backgroundLayerName" value="ic_launcher_background" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/ether_cyrcus.png" />
+                                      <entry key="foregroundLayerName" value="ic_launcher_foreground" />
+                                      <entry key="outputName" value="ic_launcher_cyrcus" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
                             <entry key="launcherLegacy">
                               <value>
                                 <PersistentState>
@@ -37,6 +69,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
+                                                <entry key="paddingPercent" value="5" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -49,9 +82,8 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="backgroundColor" value="000000" />
-                                      <entry key="iconShape" value="HRECT" />
                                       <entry key="imageAsset" value="$USER_HOME$/Downloads/ether_cyrcus.png" />
-                                      <entry key="outputName" value="ic_ether_cyrcus" />
+                                      <entry key="outputName" value="ic_ether_cyrcus_square" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -61,7 +93,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

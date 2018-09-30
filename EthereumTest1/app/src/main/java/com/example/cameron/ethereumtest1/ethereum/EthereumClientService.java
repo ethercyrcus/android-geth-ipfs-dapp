@@ -140,6 +140,10 @@ public class EthereumClientService extends Service {
     public static final String UI_UPDATE_PUBLICATION_CONTENT_COMMENTS_LIST = "ui.update.publication.content.comments.list";
     public static final String PARAM_ARRAY_PUBLICATION_CONTENT_COMMENTS_LIST = "param.array.publication.content.comments.list";
 
+    public static final String ETH_FETCH_AUTHOR_CLAIM_AMOUNT = "eth.fetch.author.claim.amount";
+    public static final String UI_UPDATE_AMOUNT_OWED_AUTHOR = "ui.update.amount.owed.author";
+    public static final String PARAM_AMOUNT_OWED_AUTHOR = "param.amount.owed.author";
+
     private EthereumClient mEthereumClient;
     private org.ethereum.geth.Context mContext;
     private Node mNode;
@@ -237,6 +241,11 @@ public class EthereumClientService extends Service {
                     int numComments = b.getInt(PARAM_NUM_COMMENTS);
                     handleFetchComments(whichPublication, publicationContentItemNumber, numComments);
                     break;
+                case ETH_FETCH_AUTHOR_CLAIM_AMOUNT:
+                    whichPublication = b.getInt(PARAM_WHICH_PUBLICATION);
+                    String selectedUser = b.getString(PARAM_ADDRESS_STRING);
+                    handleFetchAuthorClaimAmount(whichPublication, selectedUser);
+                    break;
                 default:
                     break;
             }
@@ -321,6 +330,10 @@ public class EthereumClientService extends Service {
                     b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
                     b.putInt(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, intent.getIntExtra(PARAM_PUBLICATION_CONTENT_ITEM_NUMBER, -1));
                     b.putInt(PARAM_NUM_COMMENTS, intent.getIntExtra(PARAM_NUM_COMMENTS, -1));
+                    break;
+                case ETH_FETCH_AUTHOR_CLAIM_AMOUNT:
+                    b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
+                    b.putString(PARAM_ADDRESS_STRING, intent.getStringExtra(PARAM_ADDRESS_STRING));
                     break;
             }
             b.putString(MESSAGE_ACTION, intent.getAction());
@@ -915,6 +928,49 @@ public class EthereumClientService extends Service {
 
         } catch (Exception e) {
             Log.e(TAG, "Error retrieving contentList: " + e.getMessage());
+        }
+    }
+
+    private void handleFetchAuthorClaimAmount(int whichPublication, String selectedUser) {
+        String amountOwedString = "";
+        while (!mIsReady) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BoundContract contract = Geth.bindContract(
+                    new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
+                    PUBLICATION_REGISTER_ABI, mEthereumClient);
+            CallOpts callOpts = Geth.newCallOpts();
+            callOpts.setContext(mContext);
+            Interfaces callData;
+            Interfaces returnData;
+
+            callData = Geth.newInterfaces(2);
+            Interface paramWhichPublicationCallParameter = Geth.newInterface();
+            paramWhichPublicationCallParameter.setBigInt(new BigInt(whichPublication));
+            callData.set(0, paramWhichPublicationCallParameter);
+            Interface paramSelectedUser = Geth.newInterface();
+            paramSelectedUser.setAddress(new Address(selectedUser));
+            callData.set(1, paramSelectedUser);
+
+            returnData = Geth.newInterfaces(1);
+            Interface amountOwedWei = Geth.newInterface();
+            amountOwedWei.setDefaultBigInt();
+            returnData.set(0, amountOwedWei);
+
+            contract.call(callOpts, returnData, "checkAuthorClaim", callData);
+            amountOwedString = returnData.get(0).getBigInt().toString();
+
+            Intent intent = new Intent(UI_UPDATE_AMOUNT_OWED_AUTHOR);
+            intent.putExtra(PARAM_AMOUNT_OWED_AUTHOR, amountOwedString);
+            LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+            bm.sendBroadcast(intent);
+        } catch (Exception e) {
+            Log.e(TAG, "Error retrieving username: " + e.getMessage());
         }
     }
 
