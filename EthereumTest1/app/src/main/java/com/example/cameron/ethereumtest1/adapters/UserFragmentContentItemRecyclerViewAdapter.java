@@ -63,8 +63,8 @@ public class UserFragmentContentItemRecyclerViewAdapter extends RecyclerView.Ada
                 holder.mTitleView.setText(title);
                 String textFromHtml = Jsoup.parse(ci.primaryText == null ? "" : ci.primaryText).text();
                 holder.mBodyView.setText(textFromHtml);
-                holder.mDateAndAuthorView.setText("Published " + DataUtils.convertTimeStampToDateString(ci.publishedDate)
-                        + " by " + ci.publishedByEthAddress);
+                holder.mAuthorView.setText(ci.publishedByEthAddress);
+                holder.mDateView.setText(DataUtils.convertTimeStampToDateString(ci.publishedDate));
 
 
 
@@ -104,7 +104,8 @@ public class UserFragmentContentItemRecyclerViewAdapter extends RecyclerView.Ada
         public final View mView;
         public final TextView mTitleView;
         public final TextView mBodyView;
-        public final TextView mDateAndAuthorView;
+        public final TextView mAuthorView;
+        public final TextView mDateView;
         public final ImageView mImageView;
 
         public ViewHolder(View view) {
@@ -112,7 +113,8 @@ public class UserFragmentContentItemRecyclerViewAdapter extends RecyclerView.Ada
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title);
             mBodyView = (TextView) view.findViewById(R.id.body);
-            mDateAndAuthorView = (TextView) view.findViewById(R.id.dateAndAuthor);
+            mAuthorView = (TextView) view.findViewById(R.id.author);
+            mDateView = (TextView) view.findViewById(R.id.date);
             mImageView = (ImageView) view.findViewById(R.id.contentImage);
         }
 

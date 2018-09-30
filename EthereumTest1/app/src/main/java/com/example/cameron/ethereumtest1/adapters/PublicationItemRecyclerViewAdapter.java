@@ -81,8 +81,8 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
                 holder.mBodyView.setText(textFromHtml);
                 holder.mUniqueSupportersView.setText(ci.uniqueSupporters + " supporters");
                 holder.mRevenueView.setText(DataUtils.formatAccountBalanceEther(ci.revenueWei, 8));
-                holder.mDateAndAuthorView.setText("Published " + DataUtils.convertTimeStampToDateString(ci.publishedDate)
-                        + " by " + ci.publishedByEthAddress);
+                holder.mAuthorView.setText(ci.publishedByEthAddress);
+                holder.mDateView.setText(DataUtils.convertTimeStampToDateString(ci.publishedDate));
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -178,19 +178,22 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
     }
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mTitleView;
-            public final TextView mBodyView;
-            public final TextView mDateAndAuthorView;
             public final ImageView mImageView;
+            public final TextView mTitleView;
+            public final TextView mAuthorView;
+            public final TextView mBodyView;
             public final TextView mRevenueView;
             public final TextView mUniqueSupportersView;
+            public final TextView mDateView;
+
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
                 mTitleView = (TextView) view.findViewById(R.id.title);
                 mBodyView = (TextView) view.findViewById(R.id.body);
-                mDateAndAuthorView = (TextView) view.findViewById(R.id.dateAndAuthor);
+                mAuthorView = (TextView) view.findViewById(R.id.author);
+                mDateView = (TextView) view.findViewById(R.id.date);
                 mImageView = (ImageView) view.findViewById(R.id.contentImage);
                 mRevenueView = (TextView) view.findViewById(R.id.revenue);
                 mUniqueSupportersView = (TextView) view.findViewById(R.id.uniqueSupporters);
