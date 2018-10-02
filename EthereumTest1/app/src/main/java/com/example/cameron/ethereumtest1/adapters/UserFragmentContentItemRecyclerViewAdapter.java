@@ -63,7 +63,7 @@ public class UserFragmentContentItemRecyclerViewAdapter extends RecyclerView.Ada
                 holder.mTitleView.setText(title);
                 String textFromHtml = Jsoup.parse(ci.primaryText == null ? "" : ci.primaryText).text();
                 holder.mBodyView.setText(textFromHtml);
-                holder.mAuthorView.setText(ci.publishedByEthAddress);
+                holder.mAuthorView.setText(DataUtils.formatEthereumAccount(ci.publishedByEthAddress));
                 holder.mDateView.setText(DataUtils.convertTimeStampToDateString(ci.publishedDate));
 
 

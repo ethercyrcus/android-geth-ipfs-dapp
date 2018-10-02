@@ -677,6 +677,10 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public void managePublication(View view) {
+
+    }
+
     @Override
     public void onFragmentInteraction(Uri uri) {
 
