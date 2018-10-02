@@ -147,6 +147,22 @@ public class EthereumClientService extends Service {
     public static final String ETH_WITHDRAW_AUTHOR_CLAIM = "eth.withdraw.author.claim";
     public static final String UI_WITHDRAW_AUTHOR_CLAIM_SENT = "ui.withdraw.author.claim.sent";
 
+    public static final String ETH_WITHDRAW_ADMIN_CLAIM = "eth.withdraw.admin.claim";
+    public static final String UI_WITHDRAW_ADMIN_CLAIM_SENT = "ui.withdraw.admin.claim.sent";
+    public static final String PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB = "param.withdraw.admin.claim.which.pub";
+
+    public static final String ETH_PERMISSION_AUTHOR = "eth.permission.author";
+    public static final String UI_PERMISSION_AUTHOR_SENT = "ui.permission.author.sent";
+    public static final String PARAM_PERMISSION_GRANTED_BOOL = "param.permission.granted.bool";
+    public static final String PARAM_PERMISSION_WHICH_PUBLICATION = "param.permission.which.publication";
+    public static final String PARAM_PERMISSION_WHICH_AUTHOR = "param.permission.which.author";
+
+    public static final String ETH_UPDATE_PUBLICATION_IMAGE = "eth.update.publication.image";
+    public static final String UI_UPDATE_PUBLICATION_IMAGE = "ui.update.publication.image";
+    public static final String PARAM_PUBLICATION_IMAGE_FILE_PATH = "param.publication.image.file.path";
+    public static final String PARAM_PUBLICATION_IMAGE_URL = "param.publication.image.file.url";
+
+
 
     private EthereumClient mEthereumClient;
     private org.ethereum.geth.Context mContext;
@@ -256,6 +272,11 @@ public class EthereumClientService extends Service {
                     password = b.getString(PARAM_PASSWORD);
                     handleWithdrawAuthorClaim(whichPublication, selectedUserForWithdraw, password);
                     break;
+                case ETH_WITHDRAW_ADMIN_CLAIM:
+                    whichPublication = b.getInt(PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB);
+                    password = b.getString(PARAM_PASSWORD);
+                    handleWithdrawAdminClaim(whichPublication, password);
+                    break;
                 default:
                     break;
             }
@@ -347,6 +368,11 @@ public class EthereumClientService extends Service {
                     break;
                 case ETH_WITHDRAW_AUTHOR_CLAIM:
                     b.putInt(PARAM_WHICH_PUBLICATION, intent.getIntExtra(PARAM_WHICH_PUBLICATION, -1));
+                    b.putString(PARAM_ADDRESS_STRING, intent.getStringExtra(PARAM_ADDRESS_STRING));
+                    b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
+                    break;
+                case ETH_WITHDRAW_ADMIN_CLAIM:
+                    b.putInt(PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB, intent.getIntExtra(PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB, -1));
                     b.putString(PARAM_ADDRESS_STRING, intent.getStringExtra(PARAM_ADDRESS_STRING));
                     b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
                     break;
@@ -1476,6 +1502,60 @@ public class EthereumClientService extends Service {
             e.printStackTrace();
         }
         Intent intent = new Intent(UI_WITHDRAW_AUTHOR_CLAIM_SENT);
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+        bm.sendBroadcast(intent);
+        pollForTransactionConfirmation(transactionHash, ethereumTransaction);
+    }
+
+    private void handleWithdrawAdminClaim(int whichPublication, final String password) {
+        Hash transactionHash = null;
+        DBEthereumTransaction ethereumTransaction = null;
+        try {
+            final KeyStore mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)  + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
+
+            BoundContract publicationContract = Geth.bindContract(
+                    new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
+                    PUBLICATION_REGISTER_ABI, mEthereumClient);
+
+            Address address = Geth.newAddressFromHex(PrefUtils.getSelectedAccountAddress(getBaseContext()));
+
+            TransactOpts tOpts = new TransactOpts();
+            tOpts.setContext(mContext);
+            tOpts.setFrom(address);
+            tOpts.setGasLimit(1000000);
+            tOpts.setSigner(new Signer() {
+                @Override
+                public Transaction sign(Address address, Transaction transaction) throws Exception {
+                    Account account = mKeyStore.getAccounts().get(PrefUtils.getSelectedAccountNum(getBaseContext()));
+                    mKeyStore.unlock(account, password);
+                    Transaction signed = mKeyStore.signTx(account, transaction, new BigInt(4));
+                    mKeyStore.lock(account.getAddress());
+                    return signed;
+                }
+            });
+            long noncePending  = mEthereumClient.getPendingNonceAt(mContext, address);
+            tOpts.setNonce(noncePending);
+
+            // call supportPost
+            Interfaces callParams = Geth.newInterfaces(1);
+
+            Interface paramWhichPub = Geth.newInterface();
+
+            paramWhichPub.setBigInt(new BigInt(whichPublication));
+
+            callParams.set(0, paramWhichPub);
+
+            final Transaction txWithdrawAdminClaim = publicationContract.transact(tOpts, "withdrawAdminClaim", callParams);
+
+            transactionHash = txWithdrawAdminClaim.getHash();
+            ethereumTransaction = new DBEthereumTransaction(address.getHex().toString(), transactionHash.getHex().toString(), DatabaseHelper.TX_ACTION_ID_WITHDRAW_ADMIN_CLAIM, "withdraw from pubID: " + whichPublication, System.currentTimeMillis(), 0, false, 0);
+            DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+            helper.saveTransactionInfo(ethereumTransaction);
+            mEthereumClient.sendTransaction(mContext, txWithdrawAdminClaim);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(UI_WITHDRAW_ADMIN_CLAIM_SENT);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
         bm.sendBroadcast(intent);
         pollForTransactionConfirmation(transactionHash, ethereumTransaction);

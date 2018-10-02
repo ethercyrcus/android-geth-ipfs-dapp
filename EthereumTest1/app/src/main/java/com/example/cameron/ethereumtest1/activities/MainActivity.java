@@ -678,7 +678,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void managePublication(View view) {
-
+        if (mPublicationFragment != null) {
+            mPublicationFragment.managePublication();
+        }
     }
 
     @Override

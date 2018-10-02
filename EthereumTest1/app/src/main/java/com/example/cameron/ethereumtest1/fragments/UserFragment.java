@@ -202,6 +202,20 @@ public class UserFragment extends Fragment {
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(getContext());
+//        bm.registerReceiver(mBroadcastReceiver);
+//    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(getContext());
+        bm.unregisterReceiver(mBroadcastReceiver);
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();

@@ -1,5 +1,6 @@
 package com.example.cameron.ethereumtest1.activities;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +13,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +45,33 @@ public class PublicationFragment extends Fragment {
     private Button mManagePublicationButton;
     private Button mCheckAuthorOwedAmountButton;
     public boolean mReadyToClaimAuthorFunds = false;
+    private View.OnClickListener mManageFundsOnClickListerner = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PopupMenu popupMenu = new PopupMenu(getContext(), mManagePublicationButton);
+            popupMenu.getMenu().add(0,0,0, "permission author");
+            popupMenu.getMenu().add(1,1,1, "withdraw " + DataUtils.formatAccountBalanceEther(String.valueOf(mPublication.adminClaimsOwed), 6));
+            popupMenu.getMenu().add(2,2,2, "update publication pic");
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case 0:
+                                showAuthorPermissionDialog();
+                                break;
+                            case 1:
+                                showWithdrawAdminClaimDialog();
+                                break;
+                            case 2:
+                                showUpdatePublicationPhotoDialog();
+                                break;
+                        }
+                    return true;
+                }
+            });
+            popupMenu.show();
+        }
+    };
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -53,6 +84,9 @@ public class PublicationFragment extends Fragment {
                     break;
                 case EthereumClientService.UI_WITHDRAW_AUTHOR_CLAIM_SENT:
                     updateAuthorWithdrawSent();
+                    break;
+                case EthereumClientService.UI_WITHDRAW_ADMIN_CLAIM_SENT:
+                    updateAdminWithdrawSent();
                     break;
             }
         }
@@ -71,6 +105,7 @@ public class PublicationFragment extends Fragment {
         IntentFilter filter = new IntentFilter();
         filter.addAction(EthereumClientService.UI_UPDATE_AMOUNT_OWED_AUTHOR);
         filter.addAction(EthereumClientService.UI_WITHDRAW_AUTHOR_CLAIM_SENT);
+        filter.addAction(EthereumClientService.UI_WITHDRAW_ADMIN_CLAIM_SENT);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(getContext());
         bm.registerReceiver(mBroadcastReceiver, filter);
         mReadyToClaimAuthorFunds = false;
@@ -86,6 +121,8 @@ public class PublicationFragment extends Fragment {
         mNumArticlesTextView = (TextView) v.findViewById(R.id.numArticles);
         mManagePublicationButton = (Button) v.findViewById(R.id.managePublication);
         mCheckAuthorOwedAmountButton = (Button) v.findViewById(R.id.checkAuthorClaim);
+
+        mManagePublicationButton.setOnClickListener(mManageFundsOnClickListerner);
 
         mPublicationTitleTextView.setText(mPublication.name);
         mSupportersTextView.setText(mPublication.uniqueSupporters + " supporters");
@@ -126,7 +163,7 @@ public class PublicationFragment extends Fragment {
     }
 
 
-    public void managePublication(View view) {
+    public void managePublication() {
 
     }
 
@@ -139,14 +176,48 @@ public class PublicationFragment extends Fragment {
         }
     }
 
-
     private void updateAuthorWithdrawSent() {
         mCheckAuthorOwedAmountButton.setText("author withdraw sent!");
         Toast.makeText(getContext(), "Transaction for withdrawal sent!", Toast.LENGTH_SHORT).show();
 
     }
 
+    private void updateAdminWithdrawSent() {
+        Toast.makeText(getContext(), "Admin withdraw claims sent!", Toast.LENGTH_SHORT).show();
+    }
+
     public static DBPublication getPublication() {
         return mPublication;
+    }
+
+    private void showAuthorPermissionDialog() {
+    }
+
+    private void showWithdrawAdminClaimDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_withdraw_admin_claims);
+
+        final EditText passwordEditText = (EditText) dialog.findViewById(R.id.editPassword);
+        final TextView whichPubID = (TextView)dialog.findViewById(R.id.whichPublicationID);
+        whichPubID.setText("PublicationID: " + mPublication.publicationID);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonSubmit);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String password = passwordEditText.getText().toString();
+                getActivity().startService(new Intent(getContext(), EthereumClientService.class)
+                        .putExtra(EthereumClientService.PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB, mPublication.publicationID)
+                        .putExtra(EthereumClientService.PARAM_ADDRESS_STRING, PrefUtils.getSelectedAccountAddress(getContext()))
+                        .putExtra(EthereumClientService.PARAM_PASSWORD, password)
+                        .setAction(EthereumClientService.ETH_WITHDRAW_ADMIN_CLAIM));
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
+    private void showUpdatePublicationPhotoDialog() {
     }
 }

@@ -55,6 +55,8 @@ public class DataUtils {
                 return "SUPPORT_POST";
             case DatabaseHelper.TX_ACTION_ID_WITHDRAW_AUTHOR_CLAIM:
                 return "WITHDRAW_AUTHOR_CLAIM";
+            case DatabaseHelper.TX_ACTION_ID_WITHDRAW_ADMIN_CLAIM:
+                return "WITHDRAW_ADMIN_CLAIM";
             case DatabaseHelper.TX_ACTION_ID_PUBLISH_TO_PUBLICATION:
             default:
                 return "PUBLISH PUBLICATION";
