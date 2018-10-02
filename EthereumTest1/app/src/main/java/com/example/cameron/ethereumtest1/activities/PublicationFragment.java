@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,6 +89,9 @@ public class PublicationFragment extends Fragment {
                 case EthereumClientService.UI_WITHDRAW_ADMIN_CLAIM_SENT:
                     updateAdminWithdrawSent();
                     break;
+                case EthereumClientService.UI_PERMISSION_AUTHOR_SENT:
+                    updatePermissionAuthorSent();
+                    break;
             }
         }
     };
@@ -106,6 +110,7 @@ public class PublicationFragment extends Fragment {
         filter.addAction(EthereumClientService.UI_UPDATE_AMOUNT_OWED_AUTHOR);
         filter.addAction(EthereumClientService.UI_WITHDRAW_AUTHOR_CLAIM_SENT);
         filter.addAction(EthereumClientService.UI_WITHDRAW_ADMIN_CLAIM_SENT);
+        filter.addAction(EthereumClientService.UI_PERMISSION_AUTHOR_SENT);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(getContext());
         bm.registerReceiver(mBroadcastReceiver, filter);
         mReadyToClaimAuthorFunds = false;
@@ -186,11 +191,44 @@ public class PublicationFragment extends Fragment {
         Toast.makeText(getContext(), "Admin withdraw claims sent!", Toast.LENGTH_SHORT).show();
     }
 
+    private void updatePermissionAuthorSent() {
+        Toast.makeText(getContext(), "Permission Author sent!", Toast.LENGTH_SHORT).show();
+
+    }
+
     public static DBPublication getPublication() {
         return mPublication;
     }
 
     private void showAuthorPermissionDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_permission_author);
+
+        final EditText passwordEditText = (EditText) dialog.findViewById(R.id.editPassword);
+        final EditText authorAddressEditText = (EditText) dialog.findViewById(R.id.editAuthorAddress);
+        final TextView whichPubID = (TextView)dialog.findViewById(R.id.whichPublicationID);
+        whichPubID.setText("PublicationID: " + mPublication.publicationID);
+
+        final RadioButton enabled = (RadioButton) dialog.findViewById(R.id.enabled);
+        enabled.setChecked(true);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonSubmit);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String password = passwordEditText.getText().toString();
+                getActivity().startService(new Intent(getContext(), EthereumClientService.class)
+                        .putExtra(EthereumClientService.PARAM_PERMISSION_WHICH_PUBLICATION, mPublication.publicationID)
+                        .putExtra(EthereumClientService.PARAM_PERMISSION_WHICH_AUTHOR, authorAddressEditText.getText().toString())
+                        .putExtra(EthereumClientService.PARAM_PASSWORD, password)
+                        .putExtra(EthereumClientService.PARAM_PERMISSION_GRANTED_BOOL, enabled.isChecked())
+                        .setAction(EthereumClientService.ETH_PERMISSION_AUTHOR));
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+
     }
 
     private void showWithdrawAdminClaimDialog() {

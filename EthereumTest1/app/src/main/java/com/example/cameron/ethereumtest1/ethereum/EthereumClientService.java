@@ -277,6 +277,13 @@ public class EthereumClientService extends Service {
                     password = b.getString(PARAM_PASSWORD);
                     handleWithdrawAdminClaim(whichPublication, password);
                     break;
+                case ETH_PERMISSION_AUTHOR:
+                    whichPublication = b.getInt(PARAM_PERMISSION_WHICH_PUBLICATION);
+                    String whichAuthor = b.getString(PARAM_PERMISSION_WHICH_AUTHOR);
+                    boolean permissionEnabled = b.getBoolean(PARAM_PERMISSION_GRANTED_BOOL);
+                    password = b.getString(PARAM_PASSWORD);
+                    handlePermissionAuthor(whichPublication, whichAuthor, permissionEnabled, password);
+                    break;
                 default:
                     break;
             }
@@ -374,6 +381,12 @@ public class EthereumClientService extends Service {
                 case ETH_WITHDRAW_ADMIN_CLAIM:
                     b.putInt(PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB, intent.getIntExtra(PARAM_WITHDRAW_ADMIN_CLAIM_WHICH_PUB, -1));
                     b.putString(PARAM_ADDRESS_STRING, intent.getStringExtra(PARAM_ADDRESS_STRING));
+                    b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
+                    break;
+                case ETH_PERMISSION_AUTHOR:
+                    b.putInt(PARAM_PERMISSION_WHICH_PUBLICATION, intent.getIntExtra(PARAM_PERMISSION_WHICH_PUBLICATION, -1));
+                    b.putString(PARAM_PERMISSION_WHICH_AUTHOR, intent.getStringExtra(PARAM_PERMISSION_WHICH_AUTHOR));
+                    b.putBoolean(PARAM_PERMISSION_GRANTED_BOOL, intent.getBooleanExtra(PARAM_PERMISSION_GRANTED_BOOL, false));
                     b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
                     break;
             }
@@ -1560,6 +1573,67 @@ public class EthereumClientService extends Service {
         bm.sendBroadcast(intent);
         pollForTransactionConfirmation(transactionHash, ethereumTransaction);
     }
+
+    private void handlePermissionAuthor(int whichPublication, String whichAuthor, boolean permissionEnabled, final String password) {
+        Hash transactionHash = null;
+        DBEthereumTransaction ethereumTransaction = null;
+        try {
+            final KeyStore mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)  + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
+
+            BoundContract publicationContract = Geth.bindContract(
+                    new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
+                    PUBLICATION_REGISTER_ABI, mEthereumClient);
+
+            Address address = Geth.newAddressFromHex(PrefUtils.getSelectedAccountAddress(getBaseContext()));
+
+            TransactOpts tOpts = new TransactOpts();
+            tOpts.setContext(mContext);
+            tOpts.setFrom(address);
+            tOpts.setGasLimit(1000000);
+            tOpts.setSigner(new Signer() {
+                @Override
+                public Transaction sign(Address address, Transaction transaction) throws Exception {
+                    Account account = mKeyStore.getAccounts().get(PrefUtils.getSelectedAccountNum(getBaseContext()));
+                    mKeyStore.unlock(account, password);
+                    Transaction signed = mKeyStore.signTx(account, transaction, new BigInt(4));
+                    mKeyStore.lock(account.getAddress());
+                    return signed;
+                }
+            });
+            long noncePending  = mEthereumClient.getPendingNonceAt(mContext, address);
+            tOpts.setNonce(noncePending);
+
+            // call supportPost
+            Interfaces callParams = Geth.newInterfaces(3);
+
+            Interface paramWhichPub = Geth.newInterface();
+            Interface paramWhichAuthor = Geth.newInterface();
+            Interface paramWhichPermissionEnabled = Geth.newInterface();
+
+            paramWhichPub.setBigInt(new BigInt(whichPublication));
+            paramWhichAuthor.setAddress(new Address(whichAuthor));
+            paramWhichPermissionEnabled.setBool(permissionEnabled);
+
+            callParams.set(0, paramWhichPub);
+            callParams.set(1, paramWhichAuthor);
+            callParams.set(2, paramWhichPermissionEnabled);
+
+            final Transaction txPermissionAuthor = publicationContract.transact(tOpts, "permissionAuthor", callParams);
+
+            transactionHash = txPermissionAuthor.getHash();
+            ethereumTransaction = new DBEthereumTransaction(address.getHex().toString(), transactionHash.getHex().toString(), DatabaseHelper.TX_ACTION_ID_PERMISSION_AUTHOR, whichAuthor + "enabled: " + permissionEnabled, System.currentTimeMillis(), 0, false, 0);
+            DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+            helper.saveTransactionInfo(ethereumTransaction);
+            mEthereumClient.sendTransaction(mContext, txPermissionAuthor);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(UI_PERMISSION_AUTHOR_SENT);
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+        bm.sendBroadcast(intent);
+        pollForTransactionConfirmation(transactionHash, ethereumTransaction);
+    }
+
 
     private void pollForTransactionConfirmation(Hash txHash, DBEthereumTransaction tx) {
         long timestamp = System.currentTimeMillis();

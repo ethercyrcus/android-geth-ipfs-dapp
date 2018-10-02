@@ -57,6 +57,8 @@ public class DataUtils {
                 return "WITHDRAW_AUTHOR_CLAIM";
             case DatabaseHelper.TX_ACTION_ID_WITHDRAW_ADMIN_CLAIM:
                 return "WITHDRAW_ADMIN_CLAIM";
+            case DatabaseHelper.TX_ACTION_ID_PERMISSION_AUTHOR:
+            return "PERMISSION_AUTHOR";
             case DatabaseHelper.TX_ACTION_ID_PUBLISH_TO_PUBLICATION:
             default:
                 return "PUBLISH PUBLICATION";

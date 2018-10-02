@@ -46,6 +46,8 @@ public class UserFragment extends Fragment {
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(android.content.Context context, Intent intent) {
+            if (!UserFragment.this.isVisible()) return;
+
             String action = intent.getAction();
             switch (action) {
                 case EthereumClientService.UI_UPDATE_ACCOUNT_USER_INFO:
