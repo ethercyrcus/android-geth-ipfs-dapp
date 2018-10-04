@@ -62,34 +62,55 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageView"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/imageView"
-            android:layout_marginEnd="12dp"
-            android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/account_switch"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:onClick="switchUser">
+
+            <ImageView
+                android:id="@+id/account_switch_one"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_switch_user_one_of_two"
+                android:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/account_switch_two"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentTop="true"
+                android:padding="0dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_switch_user_one_of_two"
+                android:tint="@android:color/white" />
 
             <TextView
                 android:id="@+id/accountInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
+                android:layout_margin="0dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:text="Account: ?"
                 android:textColor="@android:color/white"
-                android:textSize="10dp" />
+                android:textSize="12dp" />
 
-            <ImageButton
-                android:id="@+id/account_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_switch_account"
-                android:tint="@android:color/white" />
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 
@@ -105,7 +126,7 @@
     <LinearLayout
         android:id="@id/selector"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="34dp"
         android:layout_alignParentBottom="true"
         android:background="@android:color/black"
         android:orientation="horizontal">
@@ -118,7 +139,7 @@
             android:layout_weight="1"
             android:tint="@android:color/white"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_content_list"
+            android:src="@drawable/ic_article_list_icon"
             android:scaleType="fitCenter"
             android:onClick="showContentList"/>
 
@@ -130,7 +151,7 @@
             android:layout_weight="1"
             android:tint="@android:color/white"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_publication"
+            android:src="@drawable/ic_publication_list_icon"
             android:scaleType="fitCenter"
             android:onClick="showPublications"/>
 
@@ -142,7 +163,7 @@
             android:layout_weight="1"
             android:tint="@android:color/white"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_account"
+            android:src="@drawable/ic_switch_user_one_of_two"
             android:scaleType="fitCenter"
             android:onClick="showUserFragment"/>
 
@@ -154,7 +175,7 @@
             android:layout_weight="1"
             android:tint="@android:color/white"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_ethereum_dark"
+            android:src="@drawable/ic_ethereum_vector"
             android:scaleType="fitCenter"
             android:onClick="showEthereum"/>
 
@@ -171,7 +192,7 @@
         android:layout_above="@id/selector"
         android:layout_margin="16dp"
         android:layout_marginRight="28dp"
-        android:src="@drawable/ic_pencil"
+        android:src="@drawable/ic_create_article"
         android:scaleType="center"
         app:borderWidth="0dp"
         app:elevation="6dp"
@@ -187,7 +208,7 @@
         android:layout_above="@id/selector"
         android:layout_margin="16dp"
         android:layout_marginRight="28dp"
-        android:src="@drawable/ic_publication"
+        android:src="@drawable/ic_create_publication"
         android:scaleType="center"
         android:tint="@color/carInterior"
         app:borderWidth="0dp"
@@ -203,7 +224,7 @@
         android:layout_above="@id/selector"
         android:layout_margin="16dp"
         android:layout_marginRight="28dp"
-        android:src="@drawable/ic_ethereum_dark"
+        android:src="@drawable/ic_send_eth"
         android:tint="@color/carInterior"
         app:backgroundTint="@android:color/white"
         android:scaleType="center"
@@ -219,7 +240,7 @@
         android:layout_alignParentRight="true"
         app:backgroundTint="@android:color/black"
         android:tint="@android:color/white"
-        android:src="@drawable/ic_triangle"
+        android:src="@drawable/ic_triangle_circle"
         android:scaleType="center"
         android:layout_above="@id/selector"
         android:layout_margin="12dp"

@@ -16,12 +16,28 @@
                             <entry key="actionbar">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/icons8-triangle-24.png" />
-                                      <entry key="outputName" value="ic_triangle" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/triangle_circle.png" />
+                                      <entry key="outputName" value="ic_triangle_circle" />
                                       <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="themeColor" value="000000" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -83,7 +99,7 @@
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="backgroundColor" value="000000" />
                                       <entry key="imageAsset" value="$USER_HOME$/Downloads/ether_cyrcus.png" />
-                                      <entry key="outputName" value="ic_ether_cyrcus_square" />
+                                      <entry key="outputName" value="ic_switch_user_one_of_two" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -93,7 +109,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

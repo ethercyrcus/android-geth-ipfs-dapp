@@ -19,6 +19,7 @@ public class DataUtils {
     public static String convertTimeStampToDateString(long timestamp) {
         Date date = new Date(timestamp);
         long now = System.currentTimeMillis();
+        Date nowDate  = new Date(now);
         if ((now - timestamp) < (1000 * 60 * 60)) {
             long timePassed = now - timestamp;
             long hours = timePassed / (1000 * 60);
@@ -27,8 +28,41 @@ public class DataUtils {
             long timePassed = now - timestamp;
             long hours = timePassed / (1000 * 60 * 60);
             return hours + " hours ago";
+        } else if (date.getYear() == nowDate.getYear()) {
+            return convertMonthNumberToString(date.getMonth() + 1) + date.getDate();
         }
-        return (date.getMonth() + 1) + "/" + date.getDate() + "/" + (date.getYear() + 1900);
+        return convertMonthNumberToString(date.getMonth() + 1) + date.getDate() + (date.getYear() + 1900);
+    }
+
+    private static String convertMonthNumberToString(int i) {
+        switch (i) {
+            case 1:
+                return "Jan ";
+            case 2:
+                return "Feb ";
+            case 3:
+                return "Mar ";
+            case 4:
+                return "Apr ";
+            case 5:
+                return "May ";
+            case 6:
+                return "Jun ";
+            case 7:
+                return "Jul ";
+            case 8:
+                return "Aug ";
+            case 9:
+                return "Sep ";
+            case 10:
+                return "Oct ";
+            case 11:
+                return "Nov ";
+            case 12:
+                return "Dec ";
+             default:
+                return "";
+        }
     }
 
     public static String formatEthereumAccount(String account) {

@@ -80,7 +80,7 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
                 String textFromHtml = Jsoup.parse(ci.primaryText).text();
                 holder.mBodyView.setText(textFromHtml);
                 holder.mUniqueSupportersView.setText(ci.uniqueSupporters + " supporters");
-                holder.mRevenueView.setText(DataUtils.formatAccountBalanceEther(ci.revenueWei, 8));
+                holder.mRevenueView.setText(DataUtils.formatAccountBalanceEther(ci.revenueWei, 4));
                 holder.mAuthorView.setText(ci.publishedByEthAddress);
                 holder.mDateView.setText(DataUtils.convertTimeStampToDateString(ci.publishedDate));
 

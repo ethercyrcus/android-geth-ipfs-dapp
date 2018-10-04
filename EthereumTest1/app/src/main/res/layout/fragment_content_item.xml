@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="240dp"
-    android:layout_marginTop="16dp"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
     android:background="@android:color/white">
 
     <ImageView
         android:id="@+id/contentImage"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_height="144dp"
         android:scaleType="centerCrop"
         android:visibility="gone"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:layout_marginTop="5dp">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contentImage">
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="240dp"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginRight="@dimen/small_text_margin"
+            android:layout_marginBottom="@dimen/small_text_margin"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:maxLines="1"
@@ -40,7 +39,7 @@
             android:textAlignment="gravity"
             android:gravity="bottom"
             android:layout_marginRight="@dimen/text_margin"
-            android:layout_marginBottom="@dimen/small_text_margin"
+            android:layout_marginBottom="2dp"
             android:textSize="12dp"
             android:textStyle="bold"
             android:maxLines="1"
@@ -53,8 +52,8 @@
             android:id="@+id/body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/small_text_margin"
-            android:layout_marginRight="@dimen/small_text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="32dp"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/title"
             android:ellipsize="end"
@@ -63,35 +62,40 @@
             android:textSize="12dp"/>
 
         <TextView
-            android:id="@+id/revenue"
+            android:id="@+id/uniqueSupporters"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="@dimen/small_text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:layout_marginBottom="@dimen/text_margin"
             android:textColor="@android:color/black"
             android:textSize="12dp"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/body"/>
 
         <TextView
-            android:id="@+id/uniqueSupporters"
+            android:id="@+id/revenue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_text_margin"
             android:textColor="@android:color/black"
+            android:layout_marginTop="@dimen/small_text_margin"
             android:textSize="12dp"
-            android:layout_toRightOf="@+id/revenue"
+            android:layout_toRightOf="@+id/uniqueSupporters"
             android:layout_below="@id/body"/>
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_text_margin"
+            android:layout_marginTop="@dimen/small_text_margin"
+            android:layout_marginRight="@dimen/text_margin"
             android:textSize="12dp"
+            android:textColor="@android:color/black"
             android:layout_alignParentRight="true"
             android:layout_below="@id/body"/>
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
 

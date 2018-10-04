@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.cameron.ethereumtest1.R;
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private TextView mSynchInfoTextView;
     private TextView mAccountTextView;
-    private ImageButton mSwitchAccountButton;
+    private RelativeLayout mSwitchAccountButton;
 
     private PublicationContentListFragment mPublicationContentListFragment;
     private PublicationListFragment mPublicationListFragment;
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements
     private FloatingActionButton mFloatingActionButton2;
     private FloatingActionButton mFloatingActionButton3;
 
-    View.OnClickListener mSwitchAccountOnClickListener;
     PopupMenu.OnMenuItemClickListener mSwitchAccountPopupListener;
 
     private KeyStore mKeyStore;
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mSynchInfoTextView = (TextView) findViewById(R.id.synchInfo);
         mAccountTextView = (TextView) findViewById(R.id.accountInfo);
-        mSwitchAccountButton = (ImageButton) findViewById(R.id.account_switch);
+        mSwitchAccountButton = (RelativeLayout) findViewById(R.id.account_switch);
 
         mContentListButton = (ImageButton) findViewById(R.id.button_content_list);
         mUserFragmentButton = (ImageButton) findViewById(R.id.user_fragment_button);
@@ -169,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         refreshAccounts();
-        mSwitchAccountButton.setOnClickListener(mSwitchAccountOnClickListener);
 
         startIPFSDaemon();
         startService(new Intent(MainActivity.this, EthereumClientService.class).setAction(EthereumClientService.START_ETHEREUM_SERVICE));
@@ -235,26 +234,25 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
             }
         };
-
-        mSwitchAccountOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(MainActivity.this, mSwitchAccountButton);
-                if (mNumAccounts > 0) {
-                    try {
-                        for (int i = 0; i < mNumAccounts; i++) {
-                            popupMenu.getMenu().add(i, i, i, DataUtils.formatEthereumAccount(mKeyStore.getAccounts().get(i).getAddress().getHex()));
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-                popupMenu.getMenu().add(mNumAccounts, mNumAccounts, mNumAccounts, "NEW ACCOUNT");
-                popupMenu.setOnMenuItemClickListener(mSwitchAccountPopupListener);
-                popupMenu.show();
-            }
-        };
     }
+
+
+    public void switchUser(View view) {
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, mSwitchAccountButton);
+        if (mNumAccounts > 0) {
+            try {
+                for (int i = 0; i < mNumAccounts; i++) {
+                    popupMenu.getMenu().add(i, i, i, DataUtils.formatEthereumAccount(mKeyStore.getAccounts().get(i).getAddress().getHex()));
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        popupMenu.getMenu().add(mNumAccounts, mNumAccounts, mNumAccounts, "NEW ACCOUNT");
+        popupMenu.setOnMenuItemClickListener(mSwitchAccountPopupListener);
+        popupMenu.show();
+    }
+
 
     /*
      * Methods for managing IPFS Connectivity
