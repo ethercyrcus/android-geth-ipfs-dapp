@@ -383,6 +383,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void createNewContent(View view) {
+        animateFabMenu(null);
         //if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Intent intent = new Intent(this, EditContentActivity.class);
                 startActivity(intent);
@@ -392,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public void sendEth(View view) {
+        animateFabMenu(null);
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_send_eth);
 
@@ -416,6 +418,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void createPublication(View view) {
+        animateFabMenu(null);
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_create_publication);
 
