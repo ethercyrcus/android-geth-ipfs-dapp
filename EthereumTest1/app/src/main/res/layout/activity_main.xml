@@ -249,7 +249,7 @@
         android:scaleType="center"
         android:layout_above="@id/selector"
         android:layout_marginRight="24dp"
-        android:layout_6arginBottom="12dp"
+        android:layout_marginBottom="12dp"
         app:elevation="7dp"
         android:onClick="animateFabMenu"/>
 
