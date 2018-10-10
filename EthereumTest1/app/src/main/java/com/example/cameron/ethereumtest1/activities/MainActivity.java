@@ -9,7 +9,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -21,12 +28,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -81,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mSynchInfoTextView;
     private TextView mAccountTextView;
     private RelativeLayout mSwitchAccountButton;
+    private ImageView mToolBarShadowView;
 
     private PublicationContentListFragment mPublicationContentListFragment;
     private PublicationListFragment mPublicationListFragment;
@@ -136,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements
         mSynchInfoTextView = (TextView) findViewById(R.id.synchInfo);
         mAccountTextView = (TextView) findViewById(R.id.accountInfo);
         mSwitchAccountButton = (RelativeLayout) findViewById(R.id.account_switch);
+        mToolBarShadowView = (ImageView) findViewById(R.id.shadowDraw);
 
         mContentListButton = (ImageButton) findViewById(R.id.button_content_list);
         mUserFragmentButton = (ImageButton) findViewById(R.id.user_fragment_button);
@@ -190,6 +201,28 @@ public class MainActivity extends AppCompatActivity implements
                 Log.e("ERROR", "ERROR");
                 break;
         }
+
+        drawShadow();
+    }
+
+    private void drawShadow() {
+        LinearGradient gradient = new LinearGradient(0, 0, 0, 300, 0x33FF0000, Color.BLACK, Shader.TileMode.CLAMP);
+        Paint p = new Paint();
+        //p.setDither(true);
+        p.setShader(gradient);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        //int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        Bitmap bitmap = Bitmap.createBitmap(width, 400, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bitmap);
+        c.drawRect(new Rect(0,0, width,300), p);
+
+        BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+        mToolBarShadowView.setImageDrawable(drawable);
+        //mTopBarShadowPlaceholder
     }
 
     @Override

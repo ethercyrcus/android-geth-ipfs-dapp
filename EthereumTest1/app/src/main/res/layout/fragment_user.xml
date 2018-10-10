@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="32dp"
     android:orientation="vertical"
     android:background="@android:color/black"
     tools:context="com.example.cameron.ethereumtest1.fragments.UserFragment">
@@ -10,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:background="@android:color/white"
+        android:background="@android:color/black"
         android:layout_marginBottom="4dp"
-        android:layout_weight="35">
+        android:layout_weight="3">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,7 +24,6 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
                 android:layout_alignParentLeft="true"
                 android:visibility="invisible"/>
 
@@ -34,7 +34,6 @@
                 android:src="@drawable/ic_account_edit"
                 android:onClick="updateMetaData"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
                 android:layout_alignParentLeft="true"/>
 
             <TextView
@@ -42,9 +41,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
                 android:layout_toRightOf="@id/userIcon"
                 android:textSize="20dp"
+                android:textColor="@android:color/white"
                 android:text="@string/user_name_not_loaded" />
 
             <Button
@@ -64,14 +63,16 @@
             android:layout_height="wrap_content"
             android:textIsSelectable="true"
             android:layout_marginLeft="16dp"
-            android:textSize="16dp" />
+            android:textColor="@android:color/white"
+            android:textSize="12dp" />
 
         <TextView
             android:id="@+id/ethBalance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:textSize="16dp"
+            android:textSize="12dp"
+            android:textColor="@android:color/white"
             android:text="0 ETH" />
 
     </LinearLayout>
@@ -80,6 +81,6 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="65"/>
+        android:layout_weight="7"/>
 
 </LinearLayout>

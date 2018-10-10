@@ -4,16 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/black"
+    android:layout_marginTop="32dp"
     tools:context="com.example.cameron.ethereumtest1.fragments.PublicationListFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/text_margin"
         android:layout_marginBottom="@dimen/text_margin"
         android:padding="@dimen/small_text_margin"
         android:background="@android:color/white"
         android:textColor="@android:color/black"
+        android:textSize="14dp"
         android:text="@string/subscribed_publications"/>
 
     <android.support.v7.widget.RecyclerView
@@ -32,6 +33,7 @@
         android:padding="@dimen/small_text_margin"
         android:background="@android:color/white"
         android:textColor="@android:color/black"
+        android:textSize="14dp"
         android:text="@string/all_publications"/>
 
     <android.support.v7.widget.RecyclerView

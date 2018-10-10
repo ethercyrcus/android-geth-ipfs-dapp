@@ -114,6 +114,13 @@
 
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/shadowDraw"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/statusBar"
+        android:scaleType="fitXY"/>
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
