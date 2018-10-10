@@ -188,6 +188,16 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/fabShadow"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:layout_above="@id/selector"
+        android:scaleType="fitXY"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="0dp"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab3"
         android:layout_width="48dp"
@@ -203,7 +213,7 @@
         android:src="@drawable/ic_create_article"
         android:scaleType="center"
         app:borderWidth="0dp"
-        app:elevation="6dp"
+        app:elevation="0dp"
         android:onClick="createNewContent"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -221,7 +231,7 @@
         android:src="@drawable/ic_create_publication"
         android:scaleType="center"
         app:borderWidth="0dp"
-        app:elevation="6dp"
+        app:elevation="0dp"
         android:onClick="createPublication"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -239,7 +249,7 @@
         android:focusable="true"
         android:scaleType="center"
         app:borderWidth="0dp"
-        app:elevation="6dp"
+        app:elevation="0dp"
         android:onClick="sendEth"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -257,7 +267,7 @@
         android:layout_above="@id/selector"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="12dp"
-        app:elevation="7dp"
+        app:elevation="0dp"
         android:onClick="animateFabMenu"/>
 
 </RelativeLayout>

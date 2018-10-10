@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mAccountTextView;
     private RelativeLayout mSwitchAccountButton;
     private ImageView mToolBarShadowView;
+    private ImageView mFABShadowView;
 
     private PublicationContentListFragment mPublicationContentListFragment;
     private PublicationListFragment mPublicationListFragment;
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements
         mAccountTextView = (TextView) findViewById(R.id.accountInfo);
         mSwitchAccountButton = (RelativeLayout) findViewById(R.id.account_switch);
         mToolBarShadowView = (ImageView) findViewById(R.id.shadowDraw);
+        mFABShadowView = (ImageView) findViewById(R.id.fabShadow);
 
         mContentListButton = (ImageButton) findViewById(R.id.button_content_list);
         mUserFragmentButton = (ImageButton) findViewById(R.id.user_fragment_button);
@@ -202,10 +205,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
 
-        drawShadow();
+        drawTopBarShadow();
+        drawFloatingActionButtonShadow();
     }
 
-    private void drawShadow() {
+    private void drawTopBarShadow() {
         LinearGradient gradient = new LinearGradient(0, 0, 0, 300, 0x33FF0000, Color.BLACK, Shader.TileMode.CLAMP);
         Paint p = new Paint();
         //p.setDither(true);
@@ -222,7 +226,20 @@ public class MainActivity extends AppCompatActivity implements
 
         BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
         mToolBarShadowView.setImageDrawable(drawable);
-        //mTopBarShadowPlaceholder
+    }
+
+    private void drawFloatingActionButtonShadow() {
+        RadialGradient gradient = new RadialGradient(200,200,200,0xCC00FFFF, Color.TRANSPARENT, Shader.TileMode.CLAMP);
+        Paint p = new Paint();
+        p.setDither(true);
+        p.setShader(gradient);
+
+        Bitmap bitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bitmap);
+        c.drawCircle(200, 200, 200, p);
+
+        BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+        mFABShadowView.setImageDrawable(drawable);
     }
 
     @Override
@@ -654,11 +671,14 @@ public class MainActivity extends AppCompatActivity implements
            mFloatingActionButton1.show();
            mFloatingActionButton2.show();
            mFloatingActionButton3.show();
+           mFABShadowView.setVisibility(View.VISIBLE);
         } else {
             mFloatingActionButton3.hide();
             mFloatingActionButton2.hide();
             mFloatingActionButton1.hide();
             mFloatingActionButton.hide();
+            mFABShadowView.setVisibility(View.GONE);
+
         }
     }
 
