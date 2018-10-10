@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements
                 final long blockNumber = intent.getLongExtra(EthereumClientService.PARAM_BLOCK_NUMBER, 0);
                 mSynchInfoTextView.setText(DataUtils.formatBlockNumber(blockNumber));
                 ObjectAnimator colorAnim = ObjectAnimator.ofInt(mSynchInfoTextView, "textColor",
-                        Color.CYAN, Color.WHITE);
+                        Color.CYAN, Color.RED);
                 colorAnim.setEvaluator(new ArgbEvaluator());
                 colorAnim.setDuration(BLOCK_NUMBER_FADE_TIME_MILLI);
                 colorAnim.start();
