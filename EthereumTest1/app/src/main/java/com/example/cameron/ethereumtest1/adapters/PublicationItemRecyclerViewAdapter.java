@@ -157,7 +157,9 @@ public class PublicationItemRecyclerViewAdapter extends RecyclerView.Adapter<Pub
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_dropdown_content_list, tagOptions);
         mTagSpinner.setAdapter(spinnerArrayAdapter);
         int selection = PrefUtils.getSelectedPublication(mContext);
-        mTagSpinner.setSelection(idToSpinnerOptions.get(selection), false);
+        if (idToSpinnerOptions.size() > 0) {
+            mTagSpinner.setSelection(idToSpinnerOptions.get(selection), false);
+        }
         mTagSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
