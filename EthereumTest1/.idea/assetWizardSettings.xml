@@ -98,8 +98,9 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="backgroundColor" value="000000" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/ether_cyrcus.png" />
-                                      <entry key="outputName" value="ic_switch_user_one_of_two" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/subscribe_button.png" />
+                                      <entry key="outputName" value="ic_subscribe_button" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -109,7 +110,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

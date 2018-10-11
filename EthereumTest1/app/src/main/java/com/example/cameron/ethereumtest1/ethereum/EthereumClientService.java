@@ -474,12 +474,12 @@ public class EthereumClientService extends Service {
 //                Log.e("PEER", "Node Info Listener Address: " + mNode.getNodeInfo().getListenerAddress());
 //                Log.e("PEER", "Node Info Discovery Port: " + mNode.getNodeInfo().getDiscoveryPort());
 //                Log.e("PEER", "Node Info Listener Port: " + mNode.getNodeInfo().getListenerPort());
-                Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
+                //Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
                 for (int i = 0; i < mNode.getPeersInfo().size(); i++) {
                     Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getID());
                     Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
+                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
+                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
