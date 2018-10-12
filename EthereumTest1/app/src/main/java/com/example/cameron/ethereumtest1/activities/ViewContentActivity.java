@@ -6,10 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -54,7 +63,9 @@ public class ViewContentActivity extends AppCompatActivity {
 
     private DBPublicationContentItem mContentItem;
     private TextView mTitleTextView;
-    private TextView mDateAndAuthorTextView;
+    private TextView mDateTextView;
+    private TextView mAuthorTextView;
+    private ImageView mShadowView;
     private WebView mBodyWebView;
     private TextView mSupportersTextView;
     private TextView mRevenueTextView;
@@ -91,7 +102,9 @@ public class ViewContentActivity extends AppCompatActivity {
         mContentItem = (DBPublicationContentItem) items.get(0);
 
         mTitleTextView = (TextView) findViewById(R.id.contentTitle);
-        mDateAndAuthorTextView = (TextView) findViewById(R.id.dateAndAuthor);
+        mDateTextView = (TextView) findViewById(R.id.date);
+        mAuthorTextView = (TextView) findViewById(R.id.author);
+        mShadowView = (ImageView) findViewById(R.id.shadowDraw);
         mBodyWebView = (WebView) findViewById(R.id.contentBody);
         mSupportersTextView = (TextView) findViewById(R.id.supporters);
         mRevenueTextView = (TextView) findViewById(R.id.revenue);
@@ -99,17 +112,37 @@ public class ViewContentActivity extends AppCompatActivity {
         mCommentsListView = (ListView) findViewById(R.id.commentsListView);
 
         mTitleTextView.setText(mContentItem.title);
-        String dateAndPublishedBy = "Published " + DataUtils.convertTimeStampToDateString(mContentItem.publishedDate)
-                + " by " + mContentItem.publishedByEthAddress;
-        mDateAndAuthorTextView.setText(dateAndPublishedBy);
+        String dateAndPublishedBy = DataUtils.convertTimeStampToDateString(mContentItem.publishedDate);
+        mDateTextView.setText(dateAndPublishedBy);
+        mAuthorTextView.setText(mContentItem.publishedByEthAddress);
         mBodyWebView.loadData(mContentItem.primaryText, "text/html; charset=UTF-8", null);
-        mSupportersTextView.setText(mContentItem.uniqueSupporters + " supporters");
+        mSupportersTextView.setText(mContentItem.uniqueSupporters + " supporter(s)");
         mRevenueTextView.setText(DataUtils.formatAccountBalanceEther(mContentItem.revenueWei, 6));
         mNumCommentsTextButton.setText("view " + mContentItem.numComments + " comment(s)");
         ImageView imageView = (ImageView) findViewById(R.id.image_content_activity);
         Glide.with(getBaseContext())
                 .load(EthereumConstants.IPFS_GATEWAY_URL + mContentItem.imageIPFS)
                 .into(imageView);
+        drawShadow();
+    }
+
+    private void drawShadow() {
+        LinearGradient gradient = new LinearGradient(0, 0, 0, 300, 0x4D000000, Color.TRANSPARENT, Shader.TileMode.CLAMP);
+        Paint p = new Paint();
+        //p.setDither(true);
+        p.setShader(gradient);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        //int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        Bitmap bitmap = Bitmap.createBitmap(width, 400, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bitmap);
+        c.drawRect(new Rect(0,0, width,300), p);
+
+        BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+        mShadowView.setImageDrawable(drawable);
     }
 
 

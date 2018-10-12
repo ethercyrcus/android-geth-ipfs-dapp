@@ -18,5 +18,6 @@
     <string name="selectPublication">select publication</string>
     <string name="delete">delete</string>
     <string name="edit">edit</string>
-    <string name="supportPostButton">support post</string>
+    <string name="supportPostButton">Support post</string>
+    <string name="savePublicationButton">Save publication</string>
 </resources>
