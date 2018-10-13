@@ -129,7 +129,7 @@ public class UserFragment extends Fragment {
         mViewPager = (ViewPager) v.findViewById(R.id.pager);
         mUpdateProfPicButton = (ImageButton) v.findViewById(R.id.profPicButton);
 
-
+        //mEthAddressTextView.setSelected(true);
         mViewPager.setAdapter(buildAdapter());
         reloadUserInfo();
 
@@ -152,6 +152,7 @@ public class UserFragment extends Fragment {
     private void loadSelectedAccount() {
         mSelectedAddress = PrefUtils.getSelectedAccountAddress(getContext());
         mEthAddressTextView.setText(mSelectedAddress);
+        mEthAddressTextView.setSelected(true);
     }
 
     private void loadAccountBalance() {

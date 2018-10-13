@@ -7,75 +7,102 @@
     android:background="@android:color/black"
     tools:context="com.example.cameron.ethereumtest1.fragments.UserFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:background="@android:color/black"
-        android:layout_marginBottom="4dp"
-        android:layout_weight="3">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userIcon"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentLeft="true"
+            android:visibility="invisible"/>
 
-            <ImageView
-                android:id="@+id/userIcon"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginLeft="16dp"
-                android:layout_alignParentLeft="true"
-                android:visibility="invisible"/>
-
-            <ImageButton
-                android:id="@+id/profPicButton"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_account_edit"
-                android:onClick="updateMetaData"
-                android:layout_marginLeft="16dp"
-                android:layout_alignParentLeft="true"/>
-
-            <TextView
-                android:id="@+id/userName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_toRightOf="@id/userIcon"
-                android:textSize="20dp"
-                android:textColor="@android:color/white"
-                android:text="@string/user_name_not_loaded" />
-
-            <Button
-                android:id="@+id/registerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/register_button"
-                android:layout_toRightOf="@id/userName"
-                android:onClick="registerUser"
-                android:visibility="gone"/>
-
-        </RelativeLayout>
+        <ImageButton
+            android:id="@+id/profPicButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_account_edit"
+            android:onClick="updateMetaData"
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentLeft="true"/>
 
         <TextView
-            android:id="@+id/ethAddress"
+            android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@id/userIcon"
+            android:textSize="20dp"
             android:textColor="@android:color/white"
-            android:textSize="12dp" />
+            android:text="@string/user_name_not_loaded" />
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_button"
+            android:layout_toRightOf="@id/userName"
+            android:onClick="registerUser"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/addressAndCopyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@+id/userIcon"
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/userName"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/copyAddress"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_copy_address"
+                android:scaleType="fitXY"
+                android:onClick="copyAddress"/>
+
+            <TextView
+                android:id="@+id/ethAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/mediumGray"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:ellipsize="marquee"
+                android:text="this is a test of scrolling"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:textSize="12dp" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/ethBalance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@id/userIcon"
+            android:layout_below="@id/addressAndCopyButton"
             android:textSize="12dp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/mediumGray"
             android:text="0 ETH" />
 
-    </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="36dp"
+        android:background="@color/darkerGray"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

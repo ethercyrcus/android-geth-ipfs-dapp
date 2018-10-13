@@ -34,10 +34,9 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/triangle_circle.png" />
-                                      <entry key="outputName" value="ic_triangle_circle" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/icons8-copy-96.png" />
+                                      <entry key="outputName" value="ic_copy_address" />
                                       <entry key="theme" value="HOLO_DARK" />
-                                      <entry key="themeColor" value="000000" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -97,8 +96,6 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="backgroundColor" value="000000" />
-                                      <entry key="iconShape" value="NONE" />
                                       <entry key="imageAsset" value="$USER_HOME$/Downloads/subscribe_button.png" />
                                       <entry key="outputName" value="ic_subscribe_button" />
                                     </map>
@@ -110,7 +107,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

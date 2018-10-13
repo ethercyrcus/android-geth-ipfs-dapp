@@ -6,7 +6,9 @@
     <color name="starrySky">#363D5A</color>
     <color name="carInterior">#1a1a1a</color>
     <color name="lightGray">#D5D5D5</color>
+    <color name="mediumGray">#999999</color>
     <color name="darkGray">#5A5A5A</color>
+    <color name="darkerGray">#292929</color>
     <color name="cyan">#FF00FFFF</color>
 
     <color name="black_overlay">#66000000</color>

@@ -741,5 +741,9 @@ public class MainActivity extends AppCompatActivity implements
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    public void copyAddress(View view) {
+        Toast.makeText(this, "copied address", Toast.LENGTH_SHORT).show();
+    }
 }
 
