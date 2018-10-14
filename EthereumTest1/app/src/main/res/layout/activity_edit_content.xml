@@ -1,140 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@android:color/black"
     android:orientation="vertical"
     tools:context="com.example.cameron.ethereumtest1.activities.EditContentActivity">
 
-
     <RelativeLayout
+        android:id="@+id/image_section"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5">
+        android:layout_height="225dp"
+        android:layout_alignParentTop="true">
 
         <ImageView
             android:id="@+id/image_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:transitionName="@string/picture_transition_name"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="edit image"
-            android:onClick="uploadPhoto"/>
+            android:src="@android:color/black"/>
 
         <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_centerInParent="true"
             android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:onClick="close"/>
-
-        <Button
-            android:id="@+id/publishButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="publish"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="32dp"
-            android:onClick="publishPost"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="save draft"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@id/publishButton"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="32dp"
-            android:onClick="saveDraft"/>
+            android:src="@mipmap/ic_img_upload"
+            android:scaleType="fitXY"
+            android:onClick="uploadPhoto"/>
 
     </RelativeLayout>
 
-    <LinearLayout
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:onClick="close"/>
+
+    <EditText
+        android:id="@+id/editTitle"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:padding="@dimen/text_margin"
+        android:layout_below="@id/image_section"
+        android:background="@drawable/rounded_corner"
+        android:textSize="14sp"
+        android:hint="Create a Title"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <EditText
+        android:id="@+id/contentBody"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:gravity="start"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin"
+        android:padding="@dimen/text_margin"
+        android:layout_below="@id/editTitle"
+        android:hint="Write something..."
+        android:background="@drawable/rounded_corner"
+        android:textSize="14sp"/>
 
-            <TextView
-                android:id="@+id/contentTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:layout_margin="@dimen/text_margin"
-                android:textColor="@android:color/black"
-                android:text="click to edit title"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:onClick="showEditTitle"/>
+    <TextView
+        android:id="@+id/publishButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:textSize="10dp"
+        android:text="Publish to my feed"
+        android:background="@drawable/subscribe_button"
+        android:textColor="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="publishPost"/>
 
-            <EditText
-                android:id="@+id/editTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                android:hint="click to edit title"
-                android:visibility="gone"/>
-            <Button
-                android:id="@+id/editTitleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="save"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:visibility="gone"
-                android:onClick="saveTitle"
-                android:layout_below="@id/editTitle"/>
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:textSize="10dp"
+        android:text="Save draft"
+        android:background="@drawable/subscribe_button"
+        android:textColor="@android:color/white"
+        android:layout_above="@id/publishButton"
+        android:layout_centerHorizontal="true"
+        android:onClick="saveDraft"/>
 
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/contentBody"
-                android:background="@android:color/darker_gray"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="click to edit body"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:onClick="editBody"/>
-
-            <WebView
-                android:id="@+id/bodyWeb"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/text_margin"
-                android:visibility="gone"
-                android:focusable="true"
-                android:clickable="true"
-                android:onClick="editBody"/>
-
-        </RelativeLayout>
-
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

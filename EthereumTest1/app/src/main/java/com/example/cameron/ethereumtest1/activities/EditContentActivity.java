@@ -50,11 +50,9 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
 
     TextView mTitleTextView;
     EditText mTitleEditText;
-    Button mEditTitleButton;
     String mTitleText = null;
 
     TextView mBodyTextView;
-    WebView mBodyWebView;
     String mBodyText = null;
     DBUserContentItem mDbUserContentItem;
 
@@ -87,23 +85,21 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
 
         mTitleTextView = (TextView) findViewById(R.id.contentTitle);
         mTitleEditText = (EditText) findViewById(R.id.editTitle);
-        mEditTitleButton = (Button) findViewById(R.id.editTitleButton);
 
         mBodyTextView = (TextView) findViewById(R.id.contentBody);
-        mBodyWebView = (WebView) findViewById(R.id.bodyWeb);
 
         if (mDbUserContentItem != null) {
             mImageURL = mDbUserContentItem.imageIPFS;
             String textFromHtml = Jsoup.parse(mDbUserContentItem.primaryText == null ? "" : mDbUserContentItem.primaryText).text();
             mBodyText = textFromHtml;
             mBodyTextView.setVisibility(View.GONE);
-            mBodyWebView.setVisibility(View.VISIBLE);
-            mBodyWebView.loadData(mDbUserContentItem.primaryText, "text/html; charset=UTF-8", null);
+//            mBodyWebView.setVisibility(View.VISIBLE);
+//            mBodyWebView.loadData(mDbUserContentItem.primaryText, "text/html; charset=UTF-8", null);
             mTitleText = mDbUserContentItem.title;
             mTitleTextView.setText(mDbUserContentItem.title);
         }
 
-        mBodyWebView.setOnTouchListener(this);
+//        mBodyWebView.setOnTouchListener(this);
 
         if (mImageURL != null) {
             Glide.with(getBaseContext())
@@ -144,12 +140,12 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
 
             if (mBodyText != null) {
                 mBodyTextView.setVisibility(View.GONE);
-                mBodyWebView.setVisibility(View.VISIBLE);
+//                mBodyWebView.setVisibility(View.VISIBLE);
 
                 AndDown andDown = new AndDown();
                 String html = andDown.markdownToHtml(mBodyText);
                 html = "<style>div{font-size: 20px;font-family: \"Roboto\";font-weight: 400;}</style> <div>" + html + "</div>";
-                mBodyWebView.loadData(html, "text/html; charset=UTF-8", null);
+//                mBodyWebView.loadData(html, "text/html; charset=UTF-8", null);
             }
 
         }
@@ -178,22 +174,6 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
         cursor.close();
         return filePath;
 
-    }
-
-    public void showEditTitle(View view) {
-        mTitleTextView.setVisibility(View.GONE);
-        mTitleEditText.setVisibility(View.VISIBLE);
-        mEditTitleButton.setVisibility(View.VISIBLE);
-    }
-
-
-    public void saveTitle(View view) {
-        mTitleText = mTitleEditText.getText().toString();
-        mTitleEditText.setVisibility(View.GONE);
-        mEditTitleButton.setVisibility(View.GONE);
-
-        mTitleTextView.setText(mTitleText);
-        mTitleTextView.setVisibility(View.VISIBLE);
     }
 
     public void editBody(View view) {
