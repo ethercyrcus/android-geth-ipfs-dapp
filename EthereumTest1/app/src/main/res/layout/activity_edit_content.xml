@@ -53,7 +53,7 @@
         android:hint="Create a Title"/>
 
     <EditText
-        android:id="@+id/contentBody"
+        android:id="@+id/editContentBody"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:gravity="start"

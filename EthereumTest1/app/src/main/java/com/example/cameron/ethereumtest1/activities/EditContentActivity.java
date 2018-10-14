@@ -48,11 +48,10 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
     ImageView mImageView;
     String mImageURL = null;
 
-    TextView mTitleTextView;
     EditText mTitleEditText;
     String mTitleText = null;
 
-    TextView mBodyTextView;
+    TextView mBodyEditText;
     String mBodyText = null;
     DBUserContentItem mDbUserContentItem;
 
@@ -83,20 +82,19 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
         setContentView(R.layout.activity_edit_content);
         mImageView = (ImageView) findViewById(R.id.image_content);
 
-        mTitleTextView = (TextView) findViewById(R.id.contentTitle);
         mTitleEditText = (EditText) findViewById(R.id.editTitle);
 
-        mBodyTextView = (TextView) findViewById(R.id.contentBody);
+        mBodyEditText = (EditText) findViewById(R.id.editContentBody);
 
         if (mDbUserContentItem != null) {
             mImageURL = mDbUserContentItem.imageIPFS;
             String textFromHtml = Jsoup.parse(mDbUserContentItem.primaryText == null ? "" : mDbUserContentItem.primaryText).text();
             mBodyText = textFromHtml;
-            mBodyTextView.setVisibility(View.GONE);
 //            mBodyWebView.setVisibility(View.VISIBLE);
 //            mBodyWebView.loadData(mDbUserContentItem.primaryText, "text/html; charset=UTF-8", null);
             mTitleText = mDbUserContentItem.title;
-            mTitleTextView.setText(mDbUserContentItem.title);
+            mTitleEditText.setText(mDbUserContentItem.title);
+            mBodyEditText.setText(mBodyText);
         }
 
 //        mBodyWebView.setOnTouchListener(this);
@@ -139,7 +137,6 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
             mBodyText = data.getStringExtra(PARAM_DRAFT_CONTENT_BODY_MARKDOWN);
 
             if (mBodyText != null) {
-                mBodyTextView.setVisibility(View.GONE);
 //                mBodyWebView.setVisibility(View.VISIBLE);
 
                 AndDown andDown = new AndDown();
@@ -176,18 +173,19 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
 
     }
 
-    public void editBody(View view) {
-        Intent intent = new Intent(getBaseContext(), EditContentBodyActivity.class);
-        if (mBodyText != null) {
-            intent.putExtra(PARAM_DRAFT_CONTENT_BODY_MARKDOWN, mBodyText);
-        }
-        startActivityForResult(intent, DRAFT_BODY_MARKDOWN_REQUEST);
-    }
+//    public void editBody(View view) {
+//        Intent intent = new Intent(getBaseContext(), EditContentBodyActivity.class);
+//        if (mBodyText != null) {
+//            intent.putExtra(PARAM_DRAFT_CONTENT_BODY_MARKDOWN, mBodyText);
+//        }
+//        startActivityForResult(intent, DRAFT_BODY_MARKDOWN_REQUEST);
+//    }
 
     public void saveDraft(View view) {
+        mBodyText = mBodyEditText.getText().toString();
         String html = new AndDown().markdownToHtml(mBodyText == null ? "" : mBodyText);
         html = "<style>div{font-size: 20px;font-family: \"Roboto\";font-weight: 400;}</style> <div>" + html + "</div>";
-        ContentItem contentItem = convertDialogInputToContentItem(mTitleTextView.getText().toString(), html, mUri);
+        ContentItem contentItem = convertDialogInputToContentItem(mTitleEditText.getText().toString(), html, mUri);
         Gson gson = new Gson();
         String json = gson.toJson(contentItem);
         String address = PrefUtils.getSelectedAccountAddress(this);
@@ -210,9 +208,10 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
             @Override
             public void onClick(View v) {
                 AndDown andDown = new AndDown();
+                mBodyText = mBodyEditText.getText().toString();
                 String html = andDown.markdownToHtml(mBodyText);
                 html = "<style>div{font-size: 20px;font-family: \"Roboto\";font-weight: 400;}</style> <div>" + html + "</div>";
-                ContentItem contentItem = convertDialogInputToContentItem(mTitleTextView.getText().toString(), html, mImageURL);
+                ContentItem contentItem = convertDialogInputToContentItem(mTitleEditText.getText().toString(), html, mImageURL);
                 startService(new Intent(EditContentActivity.this, EthereumClientService.class)
                         .putExtra(PARAM_CONTENT_ITEM, contentItem)
                         .putExtra(PARAM_PASSWORD, password.getText().toString())
@@ -239,7 +238,7 @@ public class EditContentActivity extends AppCompatActivity implements View.OnTou
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN){
-            editBody(null);
+            //editBody(null);
         }
         return true;
     }
