@@ -1,5 +1,8 @@
 package com.example.cameron.ethereumtest1.fragments;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -224,6 +227,12 @@ public class UserFragment extends Fragment {
         super.onDetach();
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(getContext());
         bm.unregisterReceiver(mBroadcastReceiver);
+    }
+
+    public void copyAddress() {
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("address", mEthAddressTextView.getText().toString());
+        clipboard.setPrimaryClip(clip);
     }
 
 

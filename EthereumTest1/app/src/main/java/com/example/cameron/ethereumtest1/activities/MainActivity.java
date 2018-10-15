@@ -743,7 +743,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void copyAddress(View view) {
-        Toast.makeText(this, "copied address", Toast.LENGTH_SHORT).show();
+        if (mUserFragment != null) {
+            mUserFragment.copyAddress();
+            Toast.makeText(this, "copied address", Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
