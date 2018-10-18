@@ -45,7 +45,7 @@
             android:text="@string/register_button"
             android:layout_toRightOf="@id/userName"
             android:onClick="registerUser"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/addressAndCopyButton"

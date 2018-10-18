@@ -55,16 +55,16 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="26dp"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
             android:layout_weight="30"
             android:layout_alignParentRight="true"
-            android:background="@drawable/subscribe_button"
-            android:text="Save"
+            android:background="@drawable/white_button"
+            android:text="Remove"
             android:textSize="10dp"
             android:gravity="center"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/black"/>
 
     </LinearLayout>
 

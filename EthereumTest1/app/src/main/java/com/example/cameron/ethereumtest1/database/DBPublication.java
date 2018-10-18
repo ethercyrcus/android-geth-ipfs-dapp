@@ -3,7 +3,7 @@ package com.example.cameron.ethereumtest1.database;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class DBPublication implements Parcelable{
+public class DBPublication implements Parcelable {
 
     public int publicationID;
     public String name;
@@ -16,6 +16,7 @@ public class DBPublication implements Parcelable{
     public int uniqueSupporters;
     public boolean subscribedLocally;
     public long adminClaimsOwed;
+    public long totalRevenue;
 
     public DBPublication (int publicationID, String name, String metaData, String adminAddress,
                           //int numAccessListAddresses,

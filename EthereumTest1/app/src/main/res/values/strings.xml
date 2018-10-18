@@ -20,4 +20,6 @@
     <string name="edit">edit</string>
     <string name="supportPostButton">Support post</string>
     <string name="savePublicationButton">Save publication</string>
+    <string name="search">Search</string>
+    <string name="saved_publications">Saved publications</string>
 </resources>

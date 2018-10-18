@@ -5,24 +5,66 @@
     android:orientation="vertical"
     android:background="@android:color/black"
     android:layout_marginTop="32dp"
+    android:focusableInTouchMode="true"
     tools:context="com.example.cameron.ethereumtest1.fragments.PublicationListFragment">
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/small_text_margin"
+        android:layout_height="36dp"
         android:background="@android:color/white"
         android:textColor="@android:color/black"
         android:textSize="14dp"
-        android:text="@string/subscribed_publications"/>
+        android:layout_marginBottom="@dimen/text_margin"
+        android:drawableLeft="@android:drawable/ic_menu_search"
+        android:hint="@string/search"/>
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
         android:id="@+id/publicationsFragmentSubscriptionsList"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/black"
-        android:layout_weight="1"
-        tools:listitem="@layout/fragment_content_item" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/mostRevenue"
+            android:layout_width="0dp"
+            android:layout_height="26dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="10dp"
+            android:text="Most Revenue"
+            android:lines="2"
+            android:background="@drawable/subscribe_button"
+            android:textColor="@android:color/white"
+            android:onClick="mostRevenue" />
+
+        <TextView
+            android:id="@+id/mostSupporters"
+            android:layout_width="0dp"
+            android:layout_height="26dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="10dp"
+            android:text="Most Supporters"
+            android:lines="2"
+            android:background="@drawable/subscribe_button"
+            android:textColor="@android:color/white"
+            android:onClick="mostSupporters"/>
+
+        <TextView
+            android:id="@+id/newest"
+            android:layout_width="0dp"
+            android:layout_height="26dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="10dp"
+            android:text="Newest"
+            android:lines="2"
+            android:background="@drawable/subscribe_button"
+            android:textColor="@android:color/white"
+            android:onClick="newest"/>
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -32,7 +74,7 @@
         android:background="@android:color/white"
         android:textColor="@android:color/black"
         android:textSize="14dp"
-        android:text="@string/all_publications"/>
+        android:text="@string/saved_publications"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/publicationsFragmentPublicationsList"

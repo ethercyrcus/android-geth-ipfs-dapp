@@ -45,6 +45,7 @@ import org.ethereum.geth.Node;
 import org.ethereum.geth.NodeConfig;
 import org.ethereum.geth.Receipt;
 import org.ethereum.geth.Signer;
+import org.ethereum.geth.SyncProgress;
 import org.ethereum.geth.TransactOpts;
 import org.ethereum.geth.Transaction;
 import java.io.File;
@@ -162,6 +163,8 @@ public class EthereumClientService extends Service {
     public static final String PARAM_PUBLICATION_IMAGE_FILE_PATH = "param.publication.image.file.path";
     public static final String PARAM_PUBLICATION_IMAGE_URL = "param.publication.image.file.url";
 
+    public static final String RESTART_ETHEREUM_CLIENT = "restart.ethereum.client";
+    public static final String PARAM_HIGHEST_BLOCK_NUMBER = "param.highest.block.number";
 
 
     private EthereumClient mEthereumClient;
@@ -172,6 +175,9 @@ public class EthereumClientService extends Service {
     private ServiceHandler mServiceHandler;
     private volatile boolean mIsReady = false;
     public long mBlockNumber = 0;
+    public long mTimeOfLastUpdateMillis = 0;
+    public long mHighestBlockNumberDuringSync = 0;
+    public SyncProgress mSyncProgress;
 
     public EthereumClientService() {}
 
@@ -284,6 +290,8 @@ public class EthereumClientService extends Service {
                     password = b.getString(PARAM_PASSWORD);
                     handlePermissionAuthor(whichPublication, whichAuthor, permissionEnabled, password);
                     break;
+                case RESTART_ETHEREUM_CLIENT:
+                    handleRestartEthereumClient();
                 default:
                     break;
             }
@@ -390,7 +398,8 @@ public class EthereumClientService extends Service {
                     b.putString(PARAM_PASSWORD, intent.getStringExtra(PARAM_PASSWORD));
                     break;
             }
-            b.putString(MESSAGE_ACTION, intent.getAction());
+            String s = intent.getAction();
+            b.putString(MESSAGE_ACTION, s);
             msg.setData(b);
             mServiceHandler.sendMessage(msg);
         }
@@ -413,6 +422,18 @@ public class EthereumClientService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    private void handleRestartEthereumClient() {
+        try {
+            //mNode.stop();
+            mEthereumClient.subscribeNewHead(mContext, mNewHeadHandler, 16);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //stopSelf();
     }
 
     private void handleStartEthereumService() {
@@ -463,41 +484,49 @@ public class EthereumClientService extends Service {
 
         @Override
         public void onNewHead(final Header header) {
-            Intent intent = new Intent(UI_UPDATE_ETH_BLOCK);
-            mBlockNumber = header.getNumber();
-            if (mBlockNumber < 2800000) return;
-            intent.putExtra(PARAM_BLOCK_NUMBER, mBlockNumber);
-            LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
-            bm.sendBroadcast(intent);
-            try {
-//                Log.e("PEER", "Node Info IP: " + mNode.getNodeInfo().getIP());
-//                Log.e("PEER", "Node Info Listener Address: " + mNode.getNodeInfo().getListenerAddress());
-//                Log.e("PEER", "Node Info Discovery Port: " + mNode.getNodeInfo().getDiscoveryPort());
-//                Log.e("PEER", "Node Info Listener Port: " + mNode.getNodeInfo().getListenerPort());
-                //Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
-                for (int i = 0; i < mNode.getPeersInfo().size(); i++) {
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getID());
-                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
-                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
-                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
+            if (mHighestBlockNumberDuringSync == 0) {
+                try {
+                    mSyncProgress = mEthereumClient.syncProgress(mContext);
+                    mHighestBlockNumberDuringSync = mSyncProgress.getHighestBlock();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-            mIsReady = true;
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mTimeOfLastUpdateMillis > 1000) {
+                mBlockNumber = header.getNumber();
+                Intent intent = new Intent(UI_UPDATE_ETH_BLOCK);
+                intent.putExtra(PARAM_BLOCK_NUMBER, mBlockNumber);
+                intent.putExtra(PARAM_HIGHEST_BLOCK_NUMBER, mHighestBlockNumberDuringSync);
+                LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+                bm.sendBroadcast(intent);
+                mTimeOfLastUpdateMillis = System.currentTimeMillis();
+                mIsReady = true;
+            }
+//            try {
+////                Log.e("PEER", "Node Info IP: " + mNode.getNodeInfo().getIP());
+////                Log.e("PEER", "Node Info Listener Address: " + mNode.getNodeInfo().getListenerAddress());
+////                Log.e("PEER", "Node Info Discovery Port: " + mNode.getNodeInfo().getDiscoveryPort());
+////                Log.e("PEER", "Node Info Listener Port: " + mNode.getNodeInfo().getListenerPort());
+//                //Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
+////                for (int i = 0; i < mNode.getPeersInfo().size(); i++) {
+////                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getID());
+////                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
+////                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
+////                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
+////                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
         }
     };
 
     private void handleFetchAccountBalance(String addressString) {
         BigInt balance = new BigInt(0);
         boolean successful = false;
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
         try {
             balance = mEthereumClient.getBalanceAt(mContext, new Address(addressString), -1);
             successful = true;
@@ -520,13 +549,6 @@ public class EthereumClientService extends Service {
     private void handleFetchUserContentList(String addressString) {
         String contentString = "";
         int targetFetch = 10;
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         try {
             BoundContract contract = Geth.bindContract(
@@ -624,13 +646,6 @@ public class EthereumClientService extends Service {
 
     private void handleFetchPublicationContent(int index) {
         String contentString = "";
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         try {
             BoundContract contract = Geth.bindContract(
@@ -773,13 +788,7 @@ public class EthereumClientService extends Service {
 
     private void handleFetchAccountUserInfo(String addressString) {
         String userName = "";
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
         try {
             BoundContract contract = Geth.bindContract(
                     new Address(EthereumConstants.USER_CONTENT_REGISTER_ADDRESS_RINKEBY),
@@ -829,13 +838,6 @@ public class EthereumClientService extends Service {
 
     private void handleFetchPublicationList() {
         String contentString = "";
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         try {
             BoundContract contract = Geth.bindContract(
@@ -933,13 +935,6 @@ public class EthereumClientService extends Service {
 
     private void handleFetchComments(int whichPublication, int publicationContentItemNumber, int numComments) {
         String contentString = "";
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         try {
             BoundContract contract = Geth.bindContract(
@@ -987,13 +982,7 @@ public class EthereumClientService extends Service {
 
     private void handleFetchAuthorClaimAmount(int whichPublication, String selectedUser) {
         String amountOwedString = "";
-        while (!mIsReady) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
         try {
             BoundContract contract = Geth.bindContract(
                     new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),

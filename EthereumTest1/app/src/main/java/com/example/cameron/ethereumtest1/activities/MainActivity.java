@@ -121,14 +121,14 @@ public class MainActivity extends AppCompatActivity implements
     private long mSelectedAccount;
     private final int BLOCK_NUMBER_FADE_TIME_MILLI = 50000;
 
-
     // handler for received data from service
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(android.content.Context context, Intent intent) {
             if (intent.getAction().equals(EthereumClientService.UI_UPDATE_ETH_BLOCK)) {
                 final long blockNumber = intent.getLongExtra(EthereumClientService.PARAM_BLOCK_NUMBER, 0);
-                mSynchInfoTextView.setText(DataUtils.formatBlockNumber(blockNumber));
+                final long highestBlockNumber = intent.getLongExtra(EthereumClientService.PARAM_HIGHEST_BLOCK_NUMBER, 0);
+                mSynchInfoTextView.setText(DataUtils.formatBlockNumber(blockNumber) + (blockNumber < highestBlockNumber ? "/" + DataUtils.formatBlockNumber(highestBlockNumber) : ""));
                 ObjectAnimator colorAnim = ObjectAnimator.ofInt(mSynchInfoTextView, "textColor",
                         Color.CYAN, Color.RED);
                 colorAnim.setEvaluator(new ArgbEvaluator());
@@ -747,6 +747,23 @@ public class MainActivity extends AppCompatActivity implements
             mUserFragment.copyAddress();
             Toast.makeText(this, "copied address", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void mostRevenue(View view) {
+
+    }
+
+    public void mostSupporters(View view) {
+    }
+
+    public void newest(View view) {
+    }
+
+    public void restartNetwork(View view) {
+        startService(new Intent(MainActivity.this, EthereumClientService.class)
+                    .setAction(EthereumClientService.RESTART_ETHEREUM_CLIENT));
+            Toast.makeText(this, "stopping Ethereum client...", Toast.LENGTH_SHORT).show();
+//        }
     }
 }
 
