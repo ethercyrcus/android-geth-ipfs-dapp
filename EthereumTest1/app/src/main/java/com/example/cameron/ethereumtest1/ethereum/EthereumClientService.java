@@ -15,7 +15,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.example.cameron.ethereumtest1.database.DBEthereumTransaction;
 import com.example.cameron.ethereumtest1.database.DBPublication;
 import com.example.cameron.ethereumtest1.database.DBPublicationContentItem;
@@ -23,10 +22,8 @@ import com.example.cameron.ethereumtest1.database.DBUserContentItem;
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.model.ContentItem;
 import com.example.cameron.ethereumtest1.util.Convert;
-import com.example.cameron.ethereumtest1.util.DataUtils;
 import com.example.cameron.ethereumtest1.util.PrefUtils;
 import com.google.gson.Gson;
-
 import org.ethereum.geth.Account;
 import org.ethereum.geth.Address;
 import org.ethereum.geth.BigInt;
@@ -48,13 +45,16 @@ import org.ethereum.geth.Signer;
 import org.ethereum.geth.SyncProgress;
 import org.ethereum.geth.TransactOpts;
 import org.ethereum.geth.Transaction;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import io.ipfs.kotlin.IPFS;
 import io.ipfs.kotlin.commands.Get;
-
 import static com.example.cameron.ethereumtest1.ethereum.EthereumConstants.ETH_DATA_DIRECTORY;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumConstants.KEY_STORE;
 import static com.example.cameron.ethereumtest1.ethereum.EthereumConstants.PUBLICATION_REGISTER_ABI;
@@ -467,13 +467,43 @@ public class EthereumClientService extends Service {
             }
             mNode.start();
             mEthereumClient = mNode.getEthereumClient();
+            Log.e("PEER", "Node Info ENODE: " + mNode.getNodeInfo().getEnode());
             Log.e("PEER", "Node Info IP: " + mNode.getNodeInfo().getIP());
-            Log.e("PEER", "Node Info Listener Address: " + mNode.getNodeInfo().getListenerAddress());
-            Log.e("PEER", "Node Info Discovery Port: " + mNode.getNodeInfo().getDiscoveryPort());
             Log.e("PEER", "Node Info Listener Port: " + mNode.getNodeInfo().getListenerPort());
+            Log.e("PEER", "Send to server: " + mNode.getNodeInfo().getEnode());
+            sendAddTrustedNodeRequest();
             mEthereumClient.subscribeNewHead(mContext, mNewHeadHandler, 16);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendAddTrustedNodeRequest() {
+        String result;
+        String inputLine;
+        try {
+            URL myUrl = new URL("http://138.68.255.31:8080/" + mNode.getNodeInfo().getEnode());
+            HttpURLConnection connection =(HttpURLConnection)
+                    myUrl.openConnection();
+            //Set methods and timeouts
+            //connection.setRequestMethod(REQUEST_METHOD);
+            //connection.setReadTimeout(READ_TIMEOUT);
+            //connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+            //Connect to our url
+            connection.connect();
+            InputStreamReader streamReader = new
+                    InputStreamReader(connection.getInputStream());
+            BufferedReader reader = new BufferedReader(streamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+            while((inputLine = reader.readLine()) != null){
+                stringBuilder.append(inputLine);
+            }
+            reader.close();
+            streamReader.close();
+            result = stringBuilder.toString();
+        } catch (Exception e) {
+            Log.e("AddTrustedNode", e.getMessage());
         }
     }
 
@@ -494,7 +524,7 @@ public class EthereumClientService extends Service {
             }
 
             long currentTime = System.currentTimeMillis();
-            if (currentTime - mTimeOfLastUpdateMillis > 1000) {
+            if (currentTime - mTimeOfLastUpdateMillis > 5000) {
                 mBlockNumber = header.getNumber();
                 Intent intent = new Intent(UI_UPDATE_ETH_BLOCK);
                 intent.putExtra(PARAM_BLOCK_NUMBER, mBlockNumber);
@@ -503,23 +533,23 @@ public class EthereumClientService extends Service {
                 bm.sendBroadcast(intent);
                 mTimeOfLastUpdateMillis = System.currentTimeMillis();
                 mIsReady = true;
-            }
-//            try {
-////                Log.e("PEER", "Node Info IP: " + mNode.getNodeInfo().getIP());
-////                Log.e("PEER", "Node Info Listener Address: " + mNode.getNodeInfo().getListenerAddress());
-////                Log.e("PEER", "Node Info Discovery Port: " + mNode.getNodeInfo().getDiscoveryPort());
-////                Log.e("PEER", "Node Info Listener Port: " + mNode.getNodeInfo().getListenerPort());
-//                //Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
-////                for (int i = 0; i < mNode.getPeersInfo().size(); i++) {
-////                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getID());
-////                    Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
-////                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
-////                    //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
-////                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
 
+                try {
+                    Log.e("PEER", "Node Info IP: " + mNode.getNodeInfo().getIP());
+                    Log.e("PEER", "Node Info Listener Address: " + mNode.getNodeInfo().getListenerAddress());
+                    Log.e("PEER", "Node Info Discovery Port: " + mNode.getNodeInfo().getDiscoveryPort());
+                    Log.e("PEER", "Node Info Listener Port: " + mNode.getNodeInfo().getListenerPort());
+                    Log.e("PEER", "Num Peers: " + mNode.getPeersInfo().size());
+                    for (int i = 0; i < mNode.getPeersInfo().size(); i++) {
+                        Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getID());
+                        Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getRemoteAddress());
+                        Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getName());
+                        //Log.e("PEER", "Peer " + i + ": " + mNode.getPeersInfo().get(i).getLocalAddress());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     };
 
