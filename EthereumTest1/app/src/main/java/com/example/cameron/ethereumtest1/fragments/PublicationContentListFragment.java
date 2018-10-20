@@ -130,6 +130,7 @@ public class PublicationContentListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        //loadContentFeed(PrefUtils.getSelectedPublication(getContext()));
     }
 
     private void reloadContentList(int whichPub, ArrayList<String> revenueArray) {

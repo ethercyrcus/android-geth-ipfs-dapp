@@ -11,11 +11,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.cameron.ethereumtest1.R;
+import com.example.cameron.ethereumtest1.activities.MainActivity;
 import com.example.cameron.ethereumtest1.adapters.PublicationsRecyclerViewAdapter;
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.ethereum.EthereumClientService;
@@ -28,7 +33,7 @@ public class PublicationListFragment extends Fragment {
     private final static String TAG = PublicationListFragment.class.getName();
 
     private RecyclerView mSubscribedRecyclerView;
-    private RecyclerView mAllPublicationsRecyclerView;
+    private EditText mSearchEditText;
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -62,7 +67,19 @@ public class PublicationListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_publications, container, false);
 
-        mAllPublicationsRecyclerView = (RecyclerView) v.findViewById(R.id.publicationsFragmentPublicationsList);
+        mSubscribedRecyclerView = (RecyclerView) v.findViewById(R.id.publicationsFragmentPublicationsList);
+        mSearchEditText = (EditText) v.findViewById(R.id.search);
+
+        mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    showSearchResults(mSearchEditText.getText().toString(), SearchResultsPublicationsFragment.SORT_CATEGORY_UNIQUE_SUPPORTERS, true);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         reloadPublicationsDB();
         loadPublicationsFromEthereumChain();
@@ -71,8 +88,8 @@ public class PublicationListFragment extends Fragment {
     }
 
     private void reloadPublicationsDB() {
-        mAllPublicationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAllPublicationsRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter((AppCompatActivity) getActivity(), new DatabaseHelper(getContext()).getPublicationsCursor()));
+        mSubscribedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mSubscribedRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter((AppCompatActivity) getActivity(), new DatabaseHelper(getContext()).getPublicationsCursor()));
     }
 
     private void loadPublicationsFromEthereumChain() {
@@ -93,4 +110,7 @@ public class PublicationListFragment extends Fragment {
         bm.unregisterReceiver(mBroadcastReceiver);
     }
 
+    public void showSearchResults(String searchTerm, int sortCategoryUniqueSupporters, boolean descending) {
+        ((MainActivity)getActivity()).showSearchResultsFragment(searchTerm, sortCategoryUniqueSupporters, descending);
+    }
 }

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
+
+import com.example.cameron.ethereumtest1.fragments.SearchResultsPublicationsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -310,6 +313,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public Cursor getPublicationsCursor(String mSearchTerm, int mSortCategory, boolean mIsDescending) {
+        //TODO add this shit
+
+        String sortCategoryColumn = "";
+        switch(mSortCategory) {
+            case SearchResultsPublicationsFragment.SORT_CATEGORY_REVENUE:
+                //sortCategoryColumn = KEY_PUBLICATION_TOTAL_REVENUE;
+                break;
+            case SearchResultsPublicationsFragment.SORT_CATEGORY_UNIQUE_SUPPORTERS:
+                sortCategoryColumn = KEY_PUBLICATION_UNIQUE_SUPPORTERS;
+                break;
+            default:
+            case SearchResultsPublicationsFragment.SORT_CATEGORY_DATE:
+                sortCategoryColumn = KEY_PUBLICATION_ID;
+                break;
+        }
+
+        String ORDER_BY = " ORDER BY " + sortCategoryColumn + (mIsDescending ? " DESC" : " ASC");
+        String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0";
+        if (!TextUtils.isEmpty(mSearchTerm)) {
+            WHERE += " AND " + KEY_PUBLICATION_NAME + " LIKE \"" + mSearchTerm + "\"";
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_PUBLICATIONS + WHERE + ORDER_BY, null);
+    }
+
     public Cursor getPublicationsToViewCursor() {
         String ORDER_BY = " ORDER BY " + KEY_PUBLICATION_ID + " ASC";
         String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0";
@@ -406,4 +436,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return pubs;
     }
+
+
 }

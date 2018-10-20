@@ -46,6 +46,7 @@ import com.example.cameron.ethereumtest1.database.DBPublication;
 import com.example.cameron.ethereumtest1.database.DBUserContentItem;
 import com.example.cameron.ethereumtest1.fragments.EthTransactionListFragment;
 import com.example.cameron.ethereumtest1.fragments.PublicationListFragment;
+import com.example.cameron.ethereumtest1.fragments.SearchResultsPublicationsFragment;
 import com.example.cameron.ethereumtest1.model.ContentItem;
 import com.example.cameron.ethereumtest1.ethereum.EthereumClientService;
 import com.example.cameron.ethereumtest1.fragments.PublicationContentListFragment;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private UserFragment mUserFragment;
     private EthTransactionListFragment mEthTransactionListFragment;
     private PublicationFragment mPublicationFragment;
+    private SearchResultsPublicationsFragment mSearchResultsPublicationsFragment;
 
     private ImageButton mContentListButton;
     private ImageButton mUserFragmentButton;
@@ -660,6 +662,21 @@ public class MainActivity extends AppCompatActivity implements
         showFAB(false);
     }
 
+    public void showSearchResultsFragment(String searchTerm, int sortCategory, boolean isDescending) {
+        mSearchResultsPublicationsFragment = SearchResultsPublicationsFragment.newInstance(searchTerm, sortCategory, isDescending);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mSearchResultsPublicationsFragment);
+        transaction.commit();
+        mContentListButton.setColorFilter(Color.WHITE);
+        mPublicationListButton.setColorFilter(Color.CYAN);
+        mUserFragmentButton.setColorFilter(Color.WHITE);
+        mEthereumButton.setColorFilter(Color.WHITE);
+
+        PrefUtils.saveSelectedFragment(getBaseContext(), SELECTED_PUBLICATION_LIST);
+        showFAB(false);
+    }
+
     public void scrollToTop(View view) {
         mPublicationContentListFragment.scrollToTop();
         showFAB(true);
@@ -754,6 +771,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void mostSupporters(View view) {
+        showSearchResultsFragment(null, SearchResultsPublicationsFragment.SORT_CATEGORY_UNIQUE_SUPPORTERS, true);
     }
 
     public void newest(View view) {
