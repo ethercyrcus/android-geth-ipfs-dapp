@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical"
+    tools:context="com.example.cameron.ethereumtest1.activities.IntroductionActivity">
+
+    <TextView
+        android:id="@+id/welcomeTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/etherCircus"
+        android:layout_alignLeft="@+id/etherCircus"
+        android:paddingLeft="2dp"
+        android:text="@string/welcome_to"
+        android:textColor="@android:color/white"
+        android:textSize="24dp" />
+
+    <ImageView
+        android:id="@id/etherCircus"
+        android:layout_width="200dp"
+        android:layout_height="120dp"
+        android:layout_centerInParent="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ether_cyrcus" />
+
+    <TextView
+        android:id="@+id/betaNetwork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/etherCircus"
+        android:paddingLeft="2dp"
+        android:layout_below="@id/etherCircus"
+        android:text="@string/beta_nework"
+        android:textColor="@android:color/white"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/proceedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:paddingLeft="72dp"
+        android:paddingRight="72dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/betaNetwork"
+        android:text="@string/proceed"
+        android:background="@drawable/subscribe_button"
+        android:textColor="@android:color/white"
+        android:onClick="proceed" />
+
+
+</RelativeLayout>

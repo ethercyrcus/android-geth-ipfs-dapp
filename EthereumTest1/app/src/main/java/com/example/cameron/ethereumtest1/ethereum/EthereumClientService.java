@@ -867,8 +867,7 @@ public class EthereumClientService extends Service {
     }
 
     private void handleFetchPublicationList() {
-        String contentString = "";
-
+        ArrayList<DBPublication> dbSaveList = new ArrayList<>();
         try {
             BoundContract contract = Geth.bindContract(
                     new Address(EthereumConstants.PUBLICATION_REGISTER_ADDRESS_RINKEBY),
@@ -900,9 +899,8 @@ public class EthereumClientService extends Service {
 
             //////////////////////////////////
 
-            ArrayList<DBPublication> dbSaveList = new ArrayList<>();
             int counter = 0;
-            for (long i = numPublications - 1; i >= 0 && counter <= 15; i--) {
+            for (long i = numPublications - 1; i >= 0 && counter <= 10; i--) {
                 paramWhichPublication.setBigInt(new BigInt(i));
                 callData2.set(0, paramWhichPublication);
                 returnData2 = Geth.newInterfaces(9);
@@ -960,6 +958,13 @@ public class EthereumClientService extends Service {
 
         } catch (Exception e) {
             Log.e(TAG, "Error retrieving publication list: " + e.getMessage());
+            if (dbSaveList.size() > 0) {
+                DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                db.savePublications(dbSaveList);
+                Intent intent = new Intent(UI_UPDATE_PUBLICATION_LIST);
+                LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
+                bm.sendBroadcast(intent);
+            }
         }
     }
 

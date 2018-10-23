@@ -22,4 +22,7 @@
     <string name="savePublicationButton">Save publication</string>
     <string name="search">Search</string>
     <string name="saved_publications">Saved publications</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="beta_nework">Beta Network!</string>
+    <string name="proceed">Proceed</string>
 </resources>

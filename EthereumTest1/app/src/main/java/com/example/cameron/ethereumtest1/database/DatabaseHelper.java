@@ -438,4 +438,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public void initalizeIntroductionPublication() {
+        //TODO create into publication and post...
+    }
 }

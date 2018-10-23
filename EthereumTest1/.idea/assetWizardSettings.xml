@@ -52,7 +52,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="90" />
+                                                <entry key="scalingPercent" value="101" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -66,7 +66,7 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="000000" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/ether_cyrcus.png" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/small.png" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
                                       <entry key="outputName" value="ic_launcher_cyrcus" />
                                     </map>
@@ -96,8 +96,9 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/subscribe_button.png" />
-                                      <entry key="outputName" value="ic_subscribe_button" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/small.png" />
+                                      <entry key="outputName" value="app_icon" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -107,7 +108,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

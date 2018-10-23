@@ -44,6 +44,7 @@ import android.widget.Toast;
 import com.example.cameron.ethereumtest1.R;
 import com.example.cameron.ethereumtest1.database.DBPublication;
 import com.example.cameron.ethereumtest1.database.DBUserContentItem;
+import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.fragments.EthTransactionListFragment;
 import com.example.cameron.ethereumtest1.fragments.PublicationListFragment;
 import com.example.cameron.ethereumtest1.fragments.SearchResultsPublicationsFragment;
@@ -145,6 +146,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        startService(new Intent(MainActivity.this, EthereumClientService.class).setAction(EthereumClientService.START_ETHEREUM_SERVICE));
+
         setContentView(R.layout.activity_main);
 
         mSynchInfoTextView = (TextView) findViewById(R.id.synchInfo);
@@ -172,8 +176,8 @@ public class MainActivity extends AppCompatActivity implements
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(this);
         bm.registerReceiver(mBroadcastReceiver, filter);
 
-        mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)  + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
-        mNumAccounts = (int)mKeyStore.getAccounts().size();
+        mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
+        mNumAccounts = (int) mKeyStore.getAccounts().size();
         if (mNumAccounts > 0) {
             mSelectedAccount = PrefUtils.getSelectedAccountNum(getBaseContext());
         }
@@ -187,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements
         refreshAccounts();
 
         startIPFSDaemon();
-        startService(new Intent(MainActivity.this, EthereumClientService.class).setAction(EthereumClientService.START_ETHEREUM_SERVICE));
 
         int selectedFragment = PrefUtils.getSelectedFragment(getBaseContext());
         switch (selectedFragment) {
@@ -209,6 +212,14 @@ public class MainActivity extends AppCompatActivity implements
 
         drawTopBarShadow();
         drawFloatingActionButtonShadow();
+
+        if (!PrefUtils.getHasUserSeenIntroScreen(this)) {
+            DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+            helper.initalizeIntroductionPublication();
+
+            Intent intent = new Intent(this, IntroductionActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override

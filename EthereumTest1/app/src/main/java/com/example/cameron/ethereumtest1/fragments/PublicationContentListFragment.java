@@ -56,6 +56,7 @@ public class PublicationContentListFragment extends Fragment {
                 case "refresh-list":
                     reloadContentList(intent.getIntExtra("whichPub", 0), null);
                     loadContentFeed(intent.getIntExtra("whichPub", 0));
+                    break;
             }
         }
     };

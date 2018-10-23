@@ -12,6 +12,8 @@ public class PrefUtils {
     private final static String SHARED_PREFERENCES = "digital_desert_preferences5";
     private final static int PREF_MODE = android.content.Context.MODE_PRIVATE;
 
+    public static final String PREF_HAS_USER_SEEN_INTRO_SCREEN = "pref.has.user.seen.intro.screen";
+
     private final static String PREF_SELECTED_FRAGMENT = "pref_selected_fragment";
     public final static int SELECTED_CONTENT_LIST = 0;
     public final static int SELECTED_PUBLICATION_LIST = 1;
@@ -38,7 +40,7 @@ public class PrefUtils {
     }
 
     public static int getSelectedFragment(Context ctx) {
-        return sp(ctx).getInt(PREF_SELECTED_FRAGMENT, SELECTED_USER_FRAGMENT);
+        return sp(ctx).getInt(PREF_SELECTED_FRAGMENT, SELECTED_CONTENT_LIST);
     }
 
     public static void saveSelectedFragment(Context ctx, int whichFragment) {
@@ -106,4 +108,12 @@ public class PrefUtils {
     public static int getSelectedPublication(Context ctx) {
         return sp(ctx).getInt(PREF_SELECTED_PUBLICATION, 0);
     }
+
+    public static boolean getHasUserSeenIntroScreen(Context ctx) {
+        return sp(ctx).getBoolean(PREF_HAS_USER_SEEN_INTRO_SCREEN, false);
+    }
+    public static void updateHasUserSeenIntroScreen(Context ctx) {
+        sp(ctx).edit().putBoolean(PREF_SELECTED_PUBLICATION, true).commit();
+    }
+
 }
