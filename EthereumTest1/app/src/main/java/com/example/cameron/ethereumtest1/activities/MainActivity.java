@@ -211,6 +211,35 @@ public class MainActivity extends AppCompatActivity implements
         drawFloatingActionButtonShadow();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            mKeyStore = new KeyStore(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)  + KEY_STORE, Geth.LightScryptN, Geth.LightScryptP);
+            mNumAccounts = (int)mKeyStore.getAccounts().size();
+            if (mNumAccounts > 0) {
+                mSelectedAccount = PrefUtils.getSelectedAccountNum(getBaseContext());
+            }
+            try {
+                String accountString = mKeyStore.getAccounts().get(mSelectedAccount).getAddress().getHex();
+                mAccountTextView.setText(accountString.substring(0, 4) + "..." + accountString.substring(accountString.length() - 4, accountString.length()));
+            } catch (Exception e) {
+                Log.e(TAG, "Error retrieving account" + e.getMessage());
+            }
+            refreshAccounts();
+        } else {
+            // permission denied, boo! Disable the
+            // functionality that depends on this permission.
+        }
+        return;
+
+
+        // other 'case' lines to check for other
+        // permissions this app might request.
+
+    }
+
     private void drawTopBarShadow() {
         LinearGradient gradient = new LinearGradient(0, 0, 0, 300, 0x33FF0000, Color.BLACK, Shader.TileMode.CLAMP);
         Paint p = new Paint();
