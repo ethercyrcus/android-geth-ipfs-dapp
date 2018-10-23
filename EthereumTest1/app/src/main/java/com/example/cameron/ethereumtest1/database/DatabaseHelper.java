@@ -439,6 +439,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public void initalizeIntroductionPublication() {
-        //TODO create into publication and post...
+        //TODO Make these right
+        int publicationID = 0;
+        String name = "Welcome to Ether Cyrcus";
+        String metaData = "Android welcome publication";
+        String adminAddress = "0xe2eb4e5418e8d1f90b474318b83034a15fae409f";
+        int numPublished = 1;
+        int minSupportCost = 1;
+        int adminPayPercentage = 100;
+        int uniqueSupporters = 1;
+        boolean subscribed = true;
+        long adminClaimsOwed = 0;
+
+        DBPublication introPub = new DBPublication(publicationID, name, metaData, adminAddress, numPublished,
+                minSupportCost, adminPayPercentage, uniqueSupporters, subscribed, adminClaimsOwed);
+        ArrayList<DBPublication> pubs = new ArrayList<>();
+        pubs.add(introPub);
+        savePublications(pubs);
+
+        int publicationIndex = 0;
+        int publicationUserContentIndex = 0;
+        String address = "cameron";
+        String contentIPFS = "QmYqqSpkabCkBUVjpb82tinz1GNXgp319LStFSkTZe7bbU";
+        String imageIPFS = "QmSmb8MTYARwT8FkSBmET9M8hprMrCNXgFYkGzXDps3Q17";
+        String json = "{\"primaryImageUrl\":\"QmSmb8MTYARwT8FkSBmET9M8hprMrCNXgFYkGzXDps3Q17\",\"primaryText\":\"\\u003cstyle\\u003ediv{font-size: 20px;font-family: \\\"Roboto\\\";font-weight: 400;}\\u003c/style\\u003e \\u003cdiv\\u003e\\u003cp\\u003eWake up \\u003cyour name\\u003e... \\u003c/p\\u003e\\n\\n\\u003cp\\u003eThe Matrix has you...\\u003c/p\\u003e\\n\\u003c/div\\u003e\",\"publishedBy\":\"0xacDfBF13F97f64bEbdE30D80cCC481De5DbF9911\",\"publishedDate\":1539707050096,\"title\":\"Welcome to Ether Cyrcus\",\"userContentIndex\":9}";
+        String title = "How to use Ether Cyrcus";
+        String primaryText = "\u003cstyle\u003ediv{font-size: 20px;font-family: \"Roboto\";font-weight: 400;}\u003c/style\u003e \u003cdiv\u003e\u003cp\u003eWake up \u003cyour name\u003e... \u003c/p\u003e\n\n\u003cp\u003eThe Matrix has you...\u003c/p\u003e\n\u003c/div\u003e";
+        long publishedDate = 1539707050096l;
+        long uniqueSupportersArticle = 1l;
+        String revenueWei = "0";
+        int numComments = 0;
+
+        DBPublicationContentItem introArticle = new DBPublicationContentItem(publicationIndex, publicationUserContentIndex, address,
+                contentIPFS, imageIPFS, json, title, primaryText, publishedDate, uniqueSupportersArticle,
+                revenueWei, numComments);
+        ArrayList<DBPublicationContentItem> contentItems = new ArrayList<>();
+        contentItems.add(introArticle);
+        savePublicationContentItems(contentItems);
     }
 }

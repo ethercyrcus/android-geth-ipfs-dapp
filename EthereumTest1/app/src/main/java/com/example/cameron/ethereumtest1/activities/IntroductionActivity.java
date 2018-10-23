@@ -14,7 +14,7 @@ public class IntroductionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_introduction);
-        //PrefUtils.updateHasUserSeenIntroScreen(this);
+        PrefUtils.updateHasUserSeenIntroScreen(this);
     }
 
     public void proceed(View view) {

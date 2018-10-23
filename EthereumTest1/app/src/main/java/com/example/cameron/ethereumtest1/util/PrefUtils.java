@@ -113,7 +113,7 @@ public class PrefUtils {
         return sp(ctx).getBoolean(PREF_HAS_USER_SEEN_INTRO_SCREEN, false);
     }
     public static void updateHasUserSeenIntroScreen(Context ctx) {
-        sp(ctx).edit().putBoolean(PREF_SELECTED_PUBLICATION, true).commit();
+        sp(ctx).edit().putBoolean(PREF_HAS_USER_SEEN_INTRO_SCREEN, true).commit();
     }
 
 }

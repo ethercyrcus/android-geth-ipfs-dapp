@@ -720,7 +720,7 @@ public class EthereumClientService extends Service {
             ArrayList<String> postRevenue = new ArrayList<>();
             ArrayList<DBPublicationContentItem> dbSaveList = new ArrayList<>();
             int counter = 0;
-            for (long i = numPublished - 1; i >= 0 && counter <= 15; i--) {
+            for (long i = numPublished - 1; i >= 0 && counter <= 8; i--) {
                 callData = Geth.newInterfaces(2);
                 callData.set(0, publicationIndex);
                 Interface contentIndex = Geth.newInterface();
