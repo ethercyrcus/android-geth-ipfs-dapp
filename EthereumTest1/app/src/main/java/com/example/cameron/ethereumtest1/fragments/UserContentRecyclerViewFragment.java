@@ -106,6 +106,7 @@ public class UserContentRecyclerViewFragment extends Fragment{
                 });
                 Button deleteButton = (Button) dialog.findViewById(R.id.deleteButton);
                 Button editButton = (Button) dialog.findViewById(R.id.editButton);
+                Button previewButton = (Button) dialog.findViewById(R.id.dialogButtonPreview);
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -119,6 +120,13 @@ public class UserContentRecyclerViewFragment extends Fragment{
                     @Override
                     public void onClick(View v) {
                         ((MainActivity)getActivity()).editContent(item);
+                        dialog.dismiss();
+                    }
+                });
+                previewButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((MainActivity)getActivity()).previewPost(item);
                         dialog.dismiss();
                     }
                 });

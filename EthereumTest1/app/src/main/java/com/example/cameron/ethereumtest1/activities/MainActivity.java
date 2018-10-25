@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.cameron.ethereumtest1.R;
 import com.example.cameron.ethereumtest1.database.DBPublication;
+import com.example.cameron.ethereumtest1.database.DBPublicationContentItem;
 import com.example.cameron.ethereumtest1.database.DBUserContentItem;
 import com.example.cameron.ethereumtest1.database.DatabaseHelper;
 import com.example.cameron.ethereumtest1.fragments.EthTransactionListFragment;
@@ -435,8 +436,13 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
-    public void previewPost(View view) {
-        Toast.makeText(getApplicationContext(), "Not yet implemented!", Toast.LENGTH_SHORT).show();
+    public void previewPost(DBUserContentItem item) {
+        Intent intent = new Intent(this, ViewContentActivity.class);
+        ArrayList<DBPublicationContentItem> contentItems = new ArrayList<>();
+        DBPublicationContentItem pubItem = new DBPublicationContentItem(-1,-1,item.publishedByEthAddress, item.contentIPFS, item.imageIPFS, item.json, item.title, item.primaryText, item.publishedDate, 0, "0", 0);
+        contentItems.add(pubItem);
+        intent.putParcelableArrayListExtra("content_items", contentItems);
+        startActivity(intent);
     }
 
     public void registerUser(View view) {

@@ -47,8 +47,7 @@
         android:layout_height="wrap_content"
         android:text=" preview "
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/editPassword"
-        android:onClick="previewPost"/>
+        android:layout_below="@id/editPassword"/>
 
     <Button
         android:id="@+id/dialogButtonPost"
