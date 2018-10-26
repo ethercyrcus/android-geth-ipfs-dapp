@@ -479,18 +479,18 @@ public class EthereumClientService extends Service {
     }
 
     private void sendAddTrustedNodeRequest() {
-        String result;
+        String ipAddress = "0.0.0.0";
         String inputLine;
         try {
-            URL myUrl = new URL("http://138.68.255.31:8080/" + mNode.getNodeInfo().getEnode());
-            HttpURLConnection connection =(HttpURLConnection)
-                    myUrl.openConnection();
+            //Get my ip address since Geth is fucked up
+            URL checkIPAddressURL = new URL("https://api.ipify.org?format=text");
+            HttpURLConnection connection =(HttpURLConnection)checkIPAddressURL.openConnection();
+
             //Set methods and timeouts
             //connection.setRequestMethod(REQUEST_METHOD);
             //connection.setReadTimeout(READ_TIMEOUT);
             //connection.setConnectTimeout(CONNECTION_TIMEOUT);
 
-            //Connect to our url
             connection.connect();
             InputStreamReader streamReader = new
                     InputStreamReader(connection.getInputStream());
@@ -501,9 +501,27 @@ public class EthereumClientService extends Service {
             }
             reader.close();
             streamReader.close();
-            result = stringBuilder.toString();
+            ipAddress = stringBuilder.toString();
+
+
+            URL myUrl = new URL("http://138.68.255.31:8080/" + "enode://" + mNode.getNodeInfo().getID() + "@" + ipAddress + ":" + mNode.getNodeInfo().getListenerPort());
+            connection =(HttpURLConnection)myUrl.openConnection();
+            connection.connect();
+            streamReader = new
+                    InputStreamReader(connection.getInputStream());
+            reader = new BufferedReader(streamReader);
+            stringBuilder = new StringBuilder();
+            while((inputLine = reader.readLine()) != null){
+                stringBuilder.append(inputLine);
+            }
+            reader.close();
+            streamReader.close();
+            String response  = stringBuilder.toString();
+            //Connect to our url
+
         } catch (Exception e) {
             Log.e("AddTrustedNode", e.getMessage());
+
         }
     }
 
