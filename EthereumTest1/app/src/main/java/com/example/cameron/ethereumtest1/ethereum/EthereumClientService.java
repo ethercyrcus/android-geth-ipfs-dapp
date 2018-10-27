@@ -504,7 +504,7 @@ public class EthereumClientService extends Service {
             ipAddress = stringBuilder.toString();
 
 
-            URL myUrl = new URL("http://138.68.255.31:8080/" + "enode://" + mNode.getNodeInfo().getID() + "@" + ipAddress + ":" + mNode.getNodeInfo().getListenerPort());
+            URL myUrl = new URL("http://138.68.255.31:8080/" + "enode://" + mNode.getNodeInfo().getEnode().substring(8, 136) + "@" + ipAddress + ":" + mNode.getNodeInfo().getListenerPort());
             connection =(HttpURLConnection)myUrl.openConnection();
             connection.connect();
             streamReader = new
