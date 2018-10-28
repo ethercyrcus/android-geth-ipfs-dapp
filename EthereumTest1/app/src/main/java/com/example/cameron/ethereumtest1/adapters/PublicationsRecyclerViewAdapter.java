@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -44,12 +45,39 @@ public class PublicationsRecyclerViewAdapter extends RecyclerView.Adapter<Public
             @Override
             public void bindView(View view, Context context, Cursor cursor) {
                 final DBPublication pub = DatabaseHelper.convertCursorToDBPublication(cursor);
-                ViewHolder holder = new ViewHolder(view);
+                final ViewHolder holder = new ViewHolder(view);
 
                 holder.mNameView.setText(pub.name);
                 holder.mPostCountView.setText("articles: " + pub.numPublished);
                 holder.mSupportersView.setText("supporters: " + pub.uniqueSupporters);
                 holder.mShadowImageView.setImageDrawable(holder.mShadowDrawable);
+
+                if (pub.subscribedLocally) {
+                    holder.mSaveRemoveButton.setText("Remove");
+                    holder.mSaveRemoveButton.setTextColor(ContextCompat.getColor(mActivity, android.R.color.black));
+                    holder.mSaveRemoveButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.white_button));
+                } else {
+                    holder.mSaveRemoveButton.setText("Save");
+                    holder.mSaveRemoveButton.setTextColor(ContextCompat.getColor(mActivity, android.R.color.white));
+                    holder.mSaveRemoveButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.subscribe_button));
+                }
+
+                holder.mSaveRemoveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (pub.subscribedLocally) {
+                            new DatabaseHelper(mActivity).subscribeToPublication(pub, false);
+                            holder.mSaveRemoveButton.setText("Save");
+                            holder.mSaveRemoveButton.setTextColor(ContextCompat.getColor(mActivity, android.R.color.white));
+                            holder.mSaveRemoveButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.subscribe_button));
+                        } else {
+                            new DatabaseHelper(mActivity).subscribeToPublication(pub, true);
+                            holder.mSaveRemoveButton.setText("Remove");
+                            holder.mSaveRemoveButton.setTextColor(ContextCompat.getColor(mActivity, android.R.color.black));
+                            holder.mSaveRemoveButton.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.white_button));
+                        }
+                    }
+                });
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -85,6 +113,7 @@ public class PublicationsRecyclerViewAdapter extends RecyclerView.Adapter<Public
         public final TextView mSupportersView;
         public final BitmapDrawable mShadowDrawable;
         public final ImageView mShadowImageView;
+        public final TextView mSaveRemoveButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -94,6 +123,7 @@ public class PublicationsRecyclerViewAdapter extends RecyclerView.Adapter<Public
             mSupportersView = (TextView) view.findViewById(R.id.supporters);
             mShadowDrawable = drawTopBarShadow();
             mShadowImageView = (ImageView) view.findViewById(R.id.shadowDraw);
+            mSaveRemoveButton = (TextView) view.findViewById(R.id.saveRemoveButton);
         }
     }
 

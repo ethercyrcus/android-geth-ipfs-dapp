@@ -89,7 +89,7 @@ public class PublicationListFragment extends Fragment {
 
     private void reloadPublicationsDB() {
         mSubscribedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mSubscribedRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter((AppCompatActivity) getActivity(), new DatabaseHelper(getContext()).getPublicationsCursor()));
+        mSubscribedRecyclerView.setAdapter(new PublicationsRecyclerViewAdapter((AppCompatActivity) getActivity(), new DatabaseHelper(getContext()).getPublicationsSubscribedCursor()));
     }
 
     private void loadPublicationsFromEthereumChain() {

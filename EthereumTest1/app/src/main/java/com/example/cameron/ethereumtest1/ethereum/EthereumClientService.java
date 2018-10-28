@@ -654,6 +654,8 @@ public class EthereumClientService extends Service {
 
                 } catch (Exception e) {
                     json = "CONTENT CURRENTLY UNAVAILABLE";
+                    Log.e("UserContent Unavailable", contentString + " : " +e.getMessage());
+                    continue;
                 }
 
                 postJsonArray.add(json);
@@ -780,7 +782,8 @@ public class EthereumClientService extends Service {
                     json = new IPFS().getGet().cat(contentString);
                 } catch (Exception e) {
                     json = "CONTENT CURRENTLY UNAVAILABLE";// + e.getMessage();
-                    // Log.e("oops", e.getMessage());
+                    Log.e("Pub Content Unavailable", contentString + " : " +e.getMessage());
+                    continue;
                 }
                 ContentItem ci = convertJsonToContentItem(json);
                 if (ci == null) continue;

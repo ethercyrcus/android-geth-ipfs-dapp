@@ -696,9 +696,11 @@ public class MainActivity extends AppCompatActivity implements
         } else if (mPublicationFragment.getPublication().publicationID != publication.publicationID) {
             mPublicationFragment = PublicationFragment.newInstance(publication);
         }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mPublicationFragment);
-        transaction.commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, mPublicationFragment)
+                .addToBackStack(null)
+                .commit();
         mContentListButton.setColorFilter(Color.WHITE);
         mPublicationListButton.setColorFilter(Color.CYAN);
         mUserFragmentButton.setColorFilter(Color.WHITE);
@@ -711,9 +713,11 @@ public class MainActivity extends AppCompatActivity implements
     public void showSearchResultsFragment(String searchTerm, int sortCategory, boolean isDescending) {
         mSearchResultsPublicationsFragment = SearchResultsPublicationsFragment.newInstance(searchTerm, sortCategory, isDescending);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mSearchResultsPublicationsFragment);
-        transaction.commit();
+       getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, mSearchResultsPublicationsFragment)
+                .addToBackStack(null)
+                .commit();
         mContentListButton.setColorFilter(Color.WHITE);
         mPublicationListButton.setColorFilter(Color.CYAN);
         mUserFragmentButton.setColorFilter(Color.WHITE);
@@ -821,6 +825,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void newest(View view) {
+        showSearchResultsFragment(null, SearchResultsPublicationsFragment.SORT_CATEGORY_DATE, true);
     }
 
     public void restartNetwork(View view) {

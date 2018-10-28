@@ -53,18 +53,24 @@
 
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="26dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:layout_weight="30"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/white_button"
-            android:text="Remove"
-            android:textSize="10dp"
-            android:gravity="center"
-            android:textColor="@android:color/black"/>
+            android:layout_height="28dp"
+            android:layout_weight="30">
+
+            <TextView
+                android:id="@+id/saveRemoveButton"
+                android:layout_width="100dp"
+                android:layout_height="26dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:background="@drawable/white_button"
+                android:text="Remove"
+                android:textSize="10dp"
+                android:gravity="center"
+                android:textColor="@android:color/black"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

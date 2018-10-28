@@ -265,7 +265,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_PUBLICATION_MIN_SUPPORT_COST_WEI, pub.minSupportCostWei);
             values.put(KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE, pub.adminPaymentPercentage);
             values.put(KEY_PUBLICATION_UNIQUE_SUPPORTERS, pub.uniqueSupporters);
-            values.put(KEY_PUBLICATION_SUBSCRIBED_LOCALLY, pub.subscribedLocally);
+            values.put(KEY_PUBLICATION_SUBSCRIBED_LOCALLY, checkSubscribed(pub.publicationID) || pub.publicationID == 1);
             values.put(KEY_PUBLICATION_ADMIN_CLAIMS_OWED, pub.adminClaimsOwed);
 
             db.insertWithOnConflict(TABLE_PUBLICATIONS, null, values, CONFLICT_REPLACE);
@@ -306,7 +306,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getPublicationsCursor() {
         String ORDER_BY = " ORDER BY " + KEY_PUBLICATION_ID + " ASC";
-        String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0";
+        String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0" ;
+
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_PUBLICATIONS + WHERE + ORDER_BY, null);
+
+    }
+
+    public Cursor getPublicationsSubscribedCursor() {
+        String ORDER_BY = " ORDER BY " + KEY_PUBLICATION_ID + " ASC";
+        String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0 AND " + KEY_PUBLICATION_SUBSCRIBED_LOCALLY + " = 1" ;
 
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_PUBLICATIONS + WHERE + ORDER_BY, null);
@@ -366,6 +375,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_PUBLICATIONS + WHERE + ORDER_BY, null);
 
+    }
+
+    public boolean checkSubscribed(int id) {
+        String WHERE = " WHERE " + KEY_PUBLICATION_ID + " = " + id;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_PUBLICATIONS + WHERE , null);
+        if(c.moveToNext()) {
+            return convertCursorToDBPublication(c).subscribedLocally;
+        } else {
+            return false;
+        }
     }
 
     public static DBUserContentItem convertCursorToDBUserContentItem(Cursor c) {
@@ -430,7 +451,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<DBPublication> getPublicationsToView() {
         ArrayList<DBPublication> pubs = new ArrayList<>();
-        Cursor c = getPublicationsToViewCursor();
+        Cursor c = getPublicationsSubscribedCursor();
         while (c.moveToNext()) {
             pubs.add(convertCursorToDBPublication(c));
         }
@@ -440,7 +461,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void initalizeIntroductionPublication() {
         //TODO Make these right
-        int publicationID = 0;
+        int publicationID = 1;
         String name = "Welcome to Ether Cyrcus";
         String metaData = "Android welcome publication";
         String adminAddress = "0xe2eb4e5418e8d1f90b474318b83034a15fae409f";
@@ -457,7 +478,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         pubs.add(introPub);
         savePublications(pubs);
 
-        int publicationIndex = 0;
+        int publicationIndex = 1;
         int publicationUserContentIndex = 0;
         String address = "cameron";
         String contentIPFS = "QmYqqSpkabCkBUVjpb82tinz1GNXgp319LStFSkTZe7bbU";
@@ -476,5 +497,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<DBPublicationContentItem> contentItems = new ArrayList<>();
         contentItems.add(introArticle);
         savePublicationContentItems(contentItems);
+    }
+
+    public void subscribeToPublication(DBPublication pub, boolean shouldSubscribe) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues(8);
+        values.put(KEY_PUBLICATION_ID, pub.publicationID);
+        values.put(KEY_PUBLICATION_NAME, pub.name);
+        values.put(KEY_PUBLICATION_META_DATA, pub.metaData);
+        values.put(KEY_PUBLICATION_ADMIN_ADDRESS, pub.adminAddress);
+        values.put(KEY_PUBLICATION_NUM_PUBLISHED, pub.numPublished);
+        values.put(KEY_PUBLICATION_MIN_SUPPORT_COST_WEI, pub.minSupportCostWei);
+        values.put(KEY_PUBLICATION_ADMIN_PAYMENT_PERCENTAGE, pub.adminPaymentPercentage);
+        values.put(KEY_PUBLICATION_UNIQUE_SUPPORTERS, pub.uniqueSupporters);
+        values.put(KEY_PUBLICATION_SUBSCRIBED_LOCALLY, shouldSubscribe);
+        values.put(KEY_PUBLICATION_ADMIN_CLAIMS_OWED, pub.adminClaimsOwed);
+
+        db.insertWithOnConflict(TABLE_PUBLICATIONS, null, values, CONFLICT_REPLACE);
+        db.close();
     }
 }
