@@ -921,7 +921,7 @@ public class EthereumClientService extends Service {
             //////////////////////////////////
 
             int counter = 0;
-            for (long i = numPublications - 1; i >= 0 && counter <= 10; i--) {
+            for (long i = numPublications - 1; i >= 7 && counter <= 10; i--) {
                 paramWhichPublication.setBigInt(new BigInt(i));
                 callData2.set(0, paramWhichPublication);
                 returnData2 = Geth.newInterfaces(9);
@@ -968,8 +968,54 @@ public class EthereumClientService extends Service {
 
                 DBPublication dbPub = new DBPublication((int)i, nameString, metaDataString, adminString, (int)numPublishedLong, 0, 0, (int)numSupporters, false, adminClaimsOwedLong);
                 dbSaveList.add(dbPub);
-
             }
+
+            paramWhichPublication.setBigInt(new BigInt(0));
+            callData2.set(0, paramWhichPublication);
+            returnData2 = Geth.newInterfaces(9);
+
+            Interface name = Geth.newInterface();
+            Interface metadata = Geth.newInterface();
+            Interface adminAddress = Geth.newInterface();
+            Interface open = Geth.newInterface();
+            Interface numPublished = Geth.newInterface();
+            Interface minCost = Geth.newInterface();
+            Interface adminPercentage = Geth.newInterface();
+            Interface supporters = Geth.newInterface();
+            Interface adminClaimsOwed = Geth.newInterface();
+
+            name.setDefaultString();
+            metadata.setDefaultString();
+            adminAddress.setDefaultAddress();
+            open.setDefaultBool();
+
+            numPublished.setDefaultBigInt();
+            minCost.setDefaultBigInt();
+            adminPercentage.setDefaultUint8();
+            supporters.setDefaultBigInt();
+            adminClaimsOwed.setDefaultBigInt();
+
+            returnData2.set(0, name);
+            returnData2.set(1, metadata);
+            returnData2.set(2, adminAddress);
+            returnData2.set(3, open);
+            returnData2.set(4, numPublished);
+            returnData2.set(5, minCost);
+            returnData2.set(6, adminPercentage);
+            returnData2.set(7, supporters);
+            returnData2.set(8, adminClaimsOwed);
+
+            contract.call(callOpts, returnData2, "publicationIndex", callData2);
+
+            String nameString = returnData2.get(0).getString();
+            String metaDataString = returnData2.get(1).getString();
+            String adminString = returnData2.get(2).getAddress().getHex();
+            long numPublishedLong = returnData2.get(4).getBigInt().getInt64();
+            long numSupporters = returnData2.get(7).getBigInt().getInt64();
+            long adminClaimsOwedLong = returnData2.get(8).getBigInt().getInt64();
+
+            DBPublication dbPub = new DBPublication(0, nameString, metaDataString, adminString, (int)numPublishedLong, 0, 0, (int)numSupporters, false, adminClaimsOwedLong);
+            dbSaveList.add(dbPub);
 
             DatabaseHelper db = new DatabaseHelper(getApplicationContext());
             db.savePublications(dbSaveList);

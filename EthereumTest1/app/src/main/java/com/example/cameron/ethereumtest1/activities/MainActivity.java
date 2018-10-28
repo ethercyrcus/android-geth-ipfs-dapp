@@ -427,6 +427,60 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show();
     }
 
+    public void showCreateAccountDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_no_accounts);
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonDone);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public void showRequiresRegisterDialog() {
+        mNumAccounts = (int)mKeyStore.getAccounts().size();
+        if (mNumAccounts == 0) {
+            showCreateAccountDialog();
+            return;
+        }
+
+        if (PrefUtils.getSelectedAccountBalance(this).equals("0")) {
+            showRequiresETHDialog();
+            return;
+        }
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_requires_registration);
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonDone);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public void showRequiresETHDialog() {
+        mNumAccounts = (int)mKeyStore.getAccounts().size();
+        if (mNumAccounts == 0) {
+            showCreateAccountDialog();
+            return;
+        }
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_requires_eth);
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonDone);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     @Override
     public void onListFragmentInteraction(ContentItem item) {
         Intent intent = new Intent(this, ViewContentActivity.class);
@@ -446,6 +500,18 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void registerUser(View view) {
+
+        mNumAccounts = (int)mKeyStore.getAccounts().size();
+        if (mNumAccounts == 0) {
+            showCreateAccountDialog();
+            return;
+        }
+
+        if (PrefUtils.getSelectedAccountBalance(this).equals("0")) {
+            showRequiresETHDialog();
+            return;
+        }
+
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_register_user);
         dialog.setTitle("Register user");
@@ -491,6 +557,17 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public void sendEth(View view) {
+        mNumAccounts = (int)mKeyStore.getAccounts().size();
+        if (mNumAccounts == 0) {
+            showCreateAccountDialog();
+            return;
+        }
+
+        if (PrefUtils.getSelectedAccountBalance(this).equals("0")) {
+            showRequiresETHDialog();
+            return;
+        }
+
         animateFabMenu(null);
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_send_eth);
@@ -516,6 +593,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void createPublication(View view) {
+        mNumAccounts = (int)mKeyStore.getAccounts().size();
+        if (mNumAccounts == 0) {
+            showCreateAccountDialog();
+            return;
+        }
+
+        if (PrefUtils.getSelectedAccountBalance(this).equals("0")) {
+            showRequiresETHDialog();
+            return;
+        }
+
         animateFabMenu(null);
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_create_publication);
@@ -545,6 +633,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void updateMetaData(View view) {
+        if (PrefUtils.getSelectedAccountUserName(this).equals(getString(R.string.user_name_not_registered))) {
+            showRequiresRegisterDialog();
+            return;
+        }
+
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_upload_profile_pic);
 
@@ -812,7 +905,6 @@ public class MainActivity extends AppCompatActivity implements
     public void copyAddress(View view) {
         if (mUserFragment != null) {
             mUserFragment.copyAddress();
-            Toast.makeText(this, "copied address", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -833,6 +925,11 @@ public class MainActivity extends AppCompatActivity implements
                     .setAction(EthereumClientService.RESTART_ETHEREUM_CLIENT));
             Toast.makeText(this, "stopping Ethereum client...", Toast.LENGTH_SHORT).show();
 //        }
+    }
+
+    public void visitFaucet(View view) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.rinkeby.io/#faucet"));
+        startActivity(browserIntent);
     }
 }
 

@@ -340,7 +340,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         String ORDER_BY = " ORDER BY " + sortCategoryColumn + (mIsDescending ? " DESC" : " ASC");
-        String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0";
+        String WHERE = " WHERE " + KEY_PUBLICATION_NUM_PUBLISHED + " > 0"
+                + " AND " + KEY_PUBLICATION_ID + " > 6 OR " + KEY_PUBLICATION_ID + " < 2";
         if (!TextUtils.isEmpty(mSearchTerm)) {
             WHERE += " AND " + KEY_PUBLICATION_NAME + " LIKE \"" + mSearchTerm + "\"";
         }

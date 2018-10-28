@@ -208,12 +208,14 @@ public class UserFragment extends Fragment {
         mViewPager.getAdapter().notifyDataSetChanged();
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadContentList();
 //        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(getContext());
 //        bm.registerReceiver(mBroadcastReceiver);
-//    }
+
+    }
 
     @Override
     public void onPause() {
@@ -233,6 +235,7 @@ public class UserFragment extends Fragment {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("address", mEthAddressTextView.getText().toString());
         clipboard.setPrimaryClip(clip);
+        Toast.makeText(getContext(), "copied address " + mEthAddressTextView.getText().toString(), Toast.LENGTH_SHORT).show();
     }
 
 

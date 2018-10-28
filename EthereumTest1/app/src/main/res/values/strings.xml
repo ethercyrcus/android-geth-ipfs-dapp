@@ -25,4 +25,7 @@
     <string name="welcome_to">Welcome to</string>
     <string name="beta_nework">Beta Network!</string>
     <string name="proceed">Proceed</string>
+    <string name="needToCreateAnAccount">No Account yet - click Account in the top right</string>
+    <string name="requiresRegistration">Requires Registration - please click register on the user tab</string>
+    <string name="requiresEth">ETH balance is zero. Send ETH to your address or use the acquire eth button below.</string>
 </resources>
