@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onDestroy();
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(this);
         bm.unregisterReceiver(mBroadcastReceiver);
+        stopService(new Intent(MainActivity.this, IPFSDaemonService.class));
     }
 
     private void refreshAccounts() {
