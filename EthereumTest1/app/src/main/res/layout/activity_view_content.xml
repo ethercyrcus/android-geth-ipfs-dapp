@@ -111,23 +111,6 @@
             android:onClick="supportPost"/>
 
         <TextView
-            android:id="@+id/savePublicationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="36dp"
-            android:paddingRight="36dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:layout_below="@id/revenue"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/savePublicationButton"
-            android:textColor="@android:color/white"
-            android:background="@drawable/subscribe_button"
-            android:onClick="supportPost"/>
-
-        <TextView
             android:id="@+id/commentsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -17,6 +17,7 @@
             android:layout_height="88dp"
             android:layout_marginLeft="16dp"
             android:layout_alignParentLeft="true"
+            android:onClick="updateMetaData"
             android:visibility="invisible"/>
 
         <ImageButton

@@ -69,6 +69,7 @@ public class EthereumConstants {
     };
 
     public static final String IPFS_GATEWAY_URL = "http://ipfs.io/ipfs/";
+    //public static final String IPFS_GATEWAY_URL = "https://gateway.swedneck.xyz/ipfs/";
 
     public static String getRinkebyGenesis(Context ctx) {
         return readRawTextFile(ctx, R.raw.rinkeby);

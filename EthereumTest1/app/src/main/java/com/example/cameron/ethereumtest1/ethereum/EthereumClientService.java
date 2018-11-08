@@ -3,6 +3,8 @@ package com.example.cameron.ethereumtest1.ethereum;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -47,6 +49,7 @@ import org.ethereum.geth.TransactOpts;
 import org.ethereum.geth.Transaction;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -517,7 +520,21 @@ public class EthereumClientService extends Service {
             reader.close();
             streamReader.close();
             String response  = stringBuilder.toString();
+
             //Connect to our url
+            myUrl = new URL("http://46.101.140.109:8080/" + "enode://" + mNode.getNodeInfo().getEnode().substring(8, 136) + "@" + ipAddress + ":" + mNode.getNodeInfo().getListenerPort());
+            connection =(HttpURLConnection)myUrl.openConnection();
+            connection.connect();
+            streamReader = new
+                    InputStreamReader(connection.getInputStream());
+            reader = new BufferedReader(streamReader);
+            stringBuilder = new StringBuilder();
+            while((inputLine = reader.readLine()) != null){
+                stringBuilder.append(inputLine);
+            }
+            reader.close();
+            streamReader.close();
+            response  = stringBuilder.toString();
 
         } catch (Exception e) {
             Log.e("AddTrustedNode", e.getMessage());
@@ -596,7 +613,7 @@ public class EthereumClientService extends Service {
 
     private void handleFetchUserContentList(String addressString) {
         String contentString = "";
-        int targetFetch = 10;
+        int targetFetch = 5;
 
         try {
             BoundContract contract = Geth.bindContract(
@@ -735,12 +752,16 @@ public class EthereumClientService extends Service {
 
             //////////////////////////////////
 
+//            long targetFetch = 5;
+//            long howFarBack = numPublished > targetFetch ? numPublished - targetFetch : 0;
+//            for (long i = numContent - 1; i >= 0 && i >= howFarBack; i--) {
+
             ArrayList<String> postJsonArray = new ArrayList<>();
             ArrayList<Integer> postUniqueSupportersArray = new ArrayList<>();
             ArrayList<String> postRevenue = new ArrayList<>();
             ArrayList<DBPublicationContentItem> dbSaveList = new ArrayList<>();
             int counter = 0;
-            for (long i = numPublished - 1; i >= 0 && counter <= 8; i--) {
+            for (long i = numPublished - 1; i >= 0 && counter < 5; i--) {
                 callData = Geth.newInterfaces(2);
                 callData.set(0, publicationIndex);
                 Interface contentIndex = Geth.newInterface();
@@ -830,11 +851,55 @@ public class EthereumClientService extends Service {
 
     private void handleFetchDraftImageURL(String draftImagePath) {
         File f = new File(draftImagePath);
-        final String contentHash = new IPFS().getAdd().file(f).getHash();
+        File smallerFile = saveBitmapToFile(f);
+        final String contentHash = new IPFS().getAdd().file(smallerFile).getHash();
         Intent intent = new Intent(UI_UPDATE_DRAFT_PHOTO_URL);
         intent.putExtra(PARAM_DRAFT_PHOTO_URL, contentHash);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(EthereumClientService.this);
         bm.sendBroadcast(intent);
+    }
+
+    public File saveBitmapToFile(File file){
+        try {
+
+            // BitmapFactory options to downsize the image
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            o.inSampleSize = 6;
+            // factor of downsizing the image
+
+            FileInputStream inputStream = new FileInputStream(file);
+            //Bitmap selectedBitmap = null;
+            BitmapFactory.decodeStream(inputStream, null, o);
+            inputStream.close();
+
+            // The new size we want to scale to
+            final int REQUIRED_SIZE=25;
+
+            // Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            inputStream = new FileInputStream(file);
+
+            Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
+            inputStream.close();
+
+            // here i override the original image file
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
+
+            return file;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void handleFetchAccountUserInfo(String addressString) {
